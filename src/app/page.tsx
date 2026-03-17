@@ -32,7 +32,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 2. How Our Coffee Works */}
+        {/* 2. How We Operate */}
         <section
           id="how-our-coffee-works"
           aria-label="How our coffee works"
@@ -54,11 +54,11 @@ export default function Home() {
           <div className="grid gap-x-12 gap-y-14 md:grid-cols-4 md:gap-x-16">
             <div className="flex flex-col gap-6">
               <Image
-                src="/coffee-lot2.svg"
+                src="/farm-lot.svg"
                 alt="Farm and lot: coffee plant and house"
                 width={120}
                 height={120}
-                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28 mx-auto"
+                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28"
               />
               <div className="space-y-1">
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
@@ -73,11 +73,11 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-6">
               <Image
-                src="/coffee-roaster.svg"
+                src="/roaster.svg"
                 alt="Coffee roaster"
                 width={120}
                 height={120}
-                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28 mx-auto"
+                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28"
               />
               <div className="space-y-1">
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
@@ -92,11 +92,11 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-6">
               <Image
-                src="/coffee-sale.svg"
+                src="/fresh-price.svg"
                 alt="Freshness-based pricing"
                 width={120}
                 height={120}
-                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28 mx-auto"
+                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28"
               />
               <div className="space-y-1">
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
@@ -113,11 +113,11 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-6">
               <Image
-                src="/coffee-brew.svg"
+                src="/brew.svg"
                 alt="Brew method"
                 width={120}
                 height={120}
-                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28 mx-auto"
+                className="h-24 w-24 object-contain text-[#2a2a2a] md:h-28 md:w-28"
               />
               <div className="space-y-1">
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
