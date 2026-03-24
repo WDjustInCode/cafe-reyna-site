@@ -242,44 +242,33 @@ export function ParallaxHero() {
               transition: 'transform 0.12s ease-out, opacity 0.12s ease-out',
             }}
           >
-            <div className="pointer-events-auto w-full max-w-3xl rounded-[40px] bg-[#f5ebdc] pt-10 px-8 pb-5 shadow-[0_40px_120px_rgba(24,16,8,0.55)] lg:pt-12 lg:px-12 lg:pb-6">
+            <div className="pointer-events-auto w-full max-w-3xl rounded-[40px] bg-[#f5ebdc] px-8 py-10 shadow-[0_40px_120px_rgba(24,16,8,0.55)] lg:px-12 lg:py-12">
               <div className="space-y-6">
                 <p className="text-xs font-medium uppercase tracking-[0.25em] text-[#a88a64]">
                   100% Arabica • Organic • Fresh Roast Batches
                 </p>
-                <h1 className="text-3xl font-semibold leading-tight text-[#3a2b1c] sm:text-4xl md:text-5xl">
+                <h1 className="text-2xl font-semibold leading-snug tracking-wide text-[#3a2b1c] sm:text-3xl md:text-4xl">
                   Awaken your senses with Honduran single-origin coffee
                 </h1>
-                <p className="max-w-xl text-sm leading-relaxed text-[#5b4733] sm:text-base">
+                <p className="max-w-xl text-base leading-relaxed text-[#5b4733] sm:text-base">
                   Sourced from friend & family farms in Honduras. Roasted in
                   small, transparent batches so every bag you brew tastes like
                   a morning in the village.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
-                  <button
-                    type="button"
-                    className="rounded-full bg-[#6b3e26] px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#5a341f]"
+                  <a
+                    href="#our-coffee"
+                    className="rounded-full bg-[#6b3e26] px-6 py-2.5 text-base font-medium text-white shadow-sm hover:bg-[#5a341f]"
                   >
-                    Shop Roasts
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-full border border-[#cdbda7] px-6 py-2.5 text-sm text-[#4a3a29] hover:bg-white/60"
+                    Shop Coffee
+                  </a>
+                  <a
+                    href="#how-our-coffee-works"
+                    className="rounded-full border border-[#cdbda7] px-6 py-2.5 text-base text-[#4a3a29] hover:bg-white/60"
                   >
                     Learn More
-                  </button>
+                  </a>
                 </div>
-                <nav className="mt-10 w-full">
-                  <div className="flex w-full items-center justify-evenly text-xs uppercase tracking-[0.25em] text-[#5a341f]">
-                    <span>Home</span>
-                    <span className="select-none text-base leading-none text-[#5a341f]/50">|</span>
-                    <span>Products</span>
-                    <span className="select-none text-base leading-none text-[#5a341f]/50">|</span>
-                    <span>About</span>
-                    <span className="select-none text-base leading-none text-[#5a341f]/50">|</span>
-                    <span>Contact</span>
-                  </div>
-                </nav>
               </div>
             </div>
           </div>
