@@ -168,6 +168,7 @@ export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
           basePrice: batch.basePrice,
           remainingWeightLb: batch.remaining_roasted_weight_lb,
           elevation: farm.elevation_m ?? null,
+          shopifyVariantId: batch.shopify_variant_id ?? null,
         },
       ];
     })

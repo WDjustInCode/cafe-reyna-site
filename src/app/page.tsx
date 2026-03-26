@@ -13,6 +13,7 @@ import { WhyReyna } from './components/WhyReyna';
 import { fetchAllBatchViewModels, fetchRegionInventory, fetchVarietalInventory, fetchProcessInventory } from './lib/api';
 import { BatchCountProvider } from './components/BatchCountContext';
 import { ShopCTAButton } from './components/ShopCTAButton';
+import { CartButton } from './components/CartContext';
 
 export default async function Home() {
   const [batches, regionInventory, varietalInventory, processInventory] = await Promise.all([
@@ -47,12 +48,7 @@ export default async function Home() {
               <a href="#bulk-orders">Bulk Orders</a>
               <a href="#why-cafe-reyna">Why Café Reyna</a>
             </nav>
-            <button
-              type="button"
-              className="rounded-full border border-[#cdbda7] px-4 py-1 text-base"
-            >
-              Cart
-            </button>
+            <CartButton />
           </div>
         </section>
 

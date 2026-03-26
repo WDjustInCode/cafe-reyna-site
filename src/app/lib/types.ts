@@ -37,6 +37,7 @@ export interface ApiRoastBatch {
   basePrice: number;
   status: string;
   created_at: string;
+  shopify_variant_id?: string | null;
 }
 
 export interface ApiFarmer {
@@ -91,4 +92,5 @@ export interface BatchCardViewModel {
   basePrice: number;
   remainingWeightLb: number;
   elevation: number | null;
+  shopifyVariantId: string | null;
 }

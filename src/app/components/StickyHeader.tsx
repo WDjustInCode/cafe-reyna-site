@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { CartButton } from './CartContext';
 
 export function StickyHeader() {
   const [visible, setVisible] = useState(false);
@@ -58,12 +59,7 @@ export function StickyHeader() {
             <a href="#bulk-orders">Bulk Orders</a>
             <a href="#why-cafe-reyna">Why Café Reyna</a>
           </nav>
-          <button
-            type="button"
-            className="rounded-full border border-[#cdbda7] px-4 py-1 text-base"
-          >
-            Cart
-          </button>
+          <CartButton />
         </div>
       </div>
     </header>

@@ -138,7 +138,7 @@ export default async function FarmerPage({ params }: FarmerPageProps) {
             </Link>
             <button
               type="button"
-              className="rounded-full border border-[#cdbda7] px-4 py-1 text-base"
+              className="cursor-pointer rounded-full border border-[#cdbda7] px-4 py-1 text-base"
             >
               Cart
             </button>
