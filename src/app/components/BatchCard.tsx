@@ -92,13 +92,13 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
         <h3 className="normal-case text-xl font-semibold leading-tight text-[#2a2a2a]">
           {vm.farmName}
         </h3>
-        <p className="text-base text-[#2a2a2a]"><span className="text-[#7a6a5a]">Lot</span> {vm.lotCode}</p>
+        <p className="text-base text-[#2a2a2a]"><span className="text-[#7a6a5a]">Batch</span> <span className="font-mono">{vm.batchCode}</span></p>
         <p className="text-base text-[#4a4037]"><span className="text-[#7a6a5a]">Region</span> {vm.origin}</p>
       </header>
 
       {/* Two-column metadata + notes */}
       <div className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3">
-        <MetaCell icon="/fresh_1.svg" label="Batch" value={vm.batchCode} />
+        <MetaCell icon="/farm-lot.svg" label="Lot" value={vm.lotCode} />
         <MetaCell icon="/process.svg" label="Process" value={vm.process} />
         <MetaCell icon="/coffee-plant-grid.svg" label="Varietal" value={vm.varietal} />
         <MetaCell icon="/roast.svg" label="Roast" value={vm.roastLevel} />
