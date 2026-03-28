@@ -14,6 +14,7 @@ import { fetchAllBatchViewModels, fetchRegionInventory, fetchVarietalInventory, 
 import { BatchCountProvider } from './components/BatchCountContext';
 import { ShopCTAButton } from './components/ShopCTAButton';
 import { CartButton } from './components/CartContext';
+import { HamburgerMenu } from './components/HamburgerMenu';
 
 export default async function Home() {
   const [batches, regionInventory, varietalInventory, processInventory] = await Promise.all([
@@ -32,7 +33,7 @@ export default async function Home() {
       <main className="mx-auto flex max-w-7xl flex-col gap-80 px-6 pb-24 pt-6 sm:px-8 md:px-10">
         {/* 1. Header (always visible after hero) */}
         <section id="header" aria-label="Site header">
-          <div className="flex items-center justify-between border-b border-[#e3d7c5] pb-4">
+          <div className="relative flex items-center justify-between border-b border-[#e3d7c5] pb-4">
             <a href="#header">
               <Image
                 src="/crown-logo.png"
@@ -48,7 +49,10 @@ export default async function Home() {
               <a href="#bulk-orders">Bulk Orders</a>
               <a href="#why-cafe-reyna">Why Café Reyna</a>
             </nav>
-            <CartButton />
+            <div className="flex items-center gap-3">
+              <CartButton />
+              <HamburgerMenu />
+            </div>
           </div>
         </section>
 

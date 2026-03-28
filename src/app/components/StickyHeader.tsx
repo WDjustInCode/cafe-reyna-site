@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { CartButton } from './CartContext';
+import { HamburgerMenu } from './HamburgerMenu';
 
 export function StickyHeader() {
   const [visible, setVisible] = useState(false);
@@ -34,7 +35,7 @@ export function StickyHeader() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 sm:px-8 md:px-10">
-        <div className="flex items-center justify-between border-b border-[#e3d7c5] py-4">
+        <div className="relative flex items-center justify-between border-b border-[#e3d7c5] py-4">
           <button
             type="button"
             className="cursor-pointer"
@@ -59,7 +60,10 @@ export function StickyHeader() {
             <a href="#bulk-orders">Bulk Orders</a>
             <a href="#why-cafe-reyna">Why Café Reyna</a>
           </nav>
-          <CartButton />
+          <div className="flex items-center gap-3">
+            <CartButton />
+            <HamburgerMenu basePath="/" />
+          </div>
         </div>
       </div>
     </header>

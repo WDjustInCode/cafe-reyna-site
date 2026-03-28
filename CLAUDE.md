@@ -51,10 +51,10 @@ Wraps everything in `BatchCountProvider`. Section render order:
 12. Footer (inline)
 
 ### `src/app/coffee/[batchId]/page.tsx` — Batch Detail / "Build Your Bag" (Server Component)
-Fetches batch by ID via `fetchBatchById`; returns 404 if not found. Two-column layout on `md+`: left column has origin block + `GrindSelectorGrid` + quantity controls; right column is a sticky order summary panel. Displays freshness badge, pricing with strikethrough original, roast date.
+Fetches batch by ID via `fetchBatchById`; returns 404 if not found. Computes freshness state, badge label, discounted price, and roast date string server-side, then passes all as props to `BatchBuilderClient`. Header row includes logo link and `CartButton`.
 
 ### `src/app/farmers/[farmerId]/page.tsx` — Farmer Profile (Server Component)
-Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer portrait, story, farms, and lots with an awards table. Uses inline sub-components: `AwardsTable`, `LotCard`, `FarmSection`. Generates metadata dynamically.
+Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer portrait, story, farms, and lots with an awards table. Uses inline sub-components: `AwardsTable`, `LotCard`, `FarmSection`. Generates metadata dynamically. Header uses real `CartButton` + `HamburgerMenu` (was a placeholder button before).
 
 ---
 
@@ -72,7 +72,9 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - Background: `#b4d7ff`. Container: `h-[260vh]` outer + `sticky top-0 h-screen` inner.
 - Hero layer assets: `/hero image layer 0 (base).png` through `layer 5A.png` in `/public`.
 
-**`StickyHeader.tsx`** — Fixed header that only appears when scrolling **upward** past the hero (260vh). Uses passive scroll + resize listeners. Shows logo, nav links, cart button.
+**`StickyHeader.tsx`** — Fixed header that only appears when scrolling **upward** past the hero (260vh). Uses passive scroll + resize listeners. Shows logo, nav links, cart button, and `HamburgerMenu` (mobile only).
+
+**`HamburgerMenu.tsx`** — Mobile-only (`md:hidden`) animated hamburger nav. Accepts optional `basePath` prop (default `''`) to prefix anchor hrefs (use `"/"` on non-homepage pages). Three-bar icon animates to ✕ on open. Dropdown slides in via `max-height` transition with `bg-[#f4ede4]/95` + backdrop blur. Links: Our Coffee, How It Works, Bulk Orders, Why Café Reyna.
 
 **`BatchGridClient.tsx`** — All batch filtering and sorting logic.
 - URL-synced filters (shareable): `process`, `region`, `roast`, `varietal` via searchParams.
@@ -89,13 +91,29 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 
 **`HondurasRegions.tsx`** — 6 region cards (Copán, Montecillos, Opalaca, Comayagua, El Paraíso, Agalta). Each has name, bean icon, elevation, flavor profile, description, inventory lbs. Region cards update `region` URL filter. Includes `honduras-regions.svg` map.
 
-**`HonduranVarietals.tsx`** — Full-width dark section with `varietal-bg.jpg` overlay. 8 varietals (Catuai, Bourbon, Caturra, Lempira, IHCAFE 90, Pacas, Typica, Parainema). Each shows name, description, common regions, flavor expressions, inventory lbs. Clicking updates `varietal` URL filter.
+**`HonduranVarietals.tsx`** — Full-width dark section with responsive background images. Mobile (< 768px): `varietal.jpg`; desktop (768px+): `varietal-bg.jpg`. Implemented via two absolutely-positioned `div`s toggled with `block md:hidden` / `hidden md:block`. 8 varietals (Catuai, Bourbon, Caturra, Lempira, IHCAFE 90, Pacas, Typica, Parainema). Each shows name, description, common regions, flavor expressions, inventory lbs. Clicking updates `varietal` URL filter.
 
 **`ShopCTAButton.tsx`** — Reads `filteredCount` from `useBatchCount`. Shows "Build Your Bag" if count is 1, otherwise "Shop current coffee". Links to `#our-coffee`.
 
 **`BatchCountContext.tsx`** — Context + provider + hook.
 - `BatchCountProvider`: wraps page, holds `filteredCount` state, initialized with total batch count.
 - `useBatchCount()`: returns `{ filteredCount, setFilteredCount }`.
+
+**`CartContext.tsx`** — Shopify cart state provider.
+- `CartProvider`: wraps root layout; persists `cartId` to localStorage (`cafe-reyna-cart`). On mount, rehydrates from localStorage via `getCart`.
+- `CartLine` interface: `{ lineId, variantId, quantity, batchCode, grindType }`.
+- `useCart()`: returns `{ itemCount, isLoading, isCartOpen, cartLines, variantQuantities, openCart, closeCart, addItem, updateItem, removeItem, checkout }`.
+- `CartButton`: pill button with item count badge (capped at "9+"). Opens the cart drawer.
+- `variantQuantities`: `Record<variantId, totalQuantity>` — used by `BatchBuilderClient` to track per-variant cart totals for stock-limit enforcement.
+
+**`CartDrawer.tsx`** — Slide-in cart panel (right side, fixed, z-50). Locks body scroll when open. Shows line items with inline quantity steppers (decrement to 1 removes the line, ✕ icon at qty 1). Footer shows total bag count and Checkout button that redirects to Shopify checkout URL.
+
+**`BatchBuilderClient.tsx`** — Client component for the batch detail two-column layout.
+- Props: `batch`, `daysOld`, `freshnessState`, `badgeLabel`, `discountedPrice`, `isDiscounted`, `roastDateFormatted` (all computed server-side).
+- Left column: origin block, `GrindSelectorGrid`, quantity stepper, roast batch info panel.
+- Right column: order summary aside with live quantity × price calculation and Add to Cart button.
+- Stock enforcement: `stockMax = floor(remainingWeightLb / 0.75)`. Compares against `variantQuantities` from cart to prevent over-adding. Shows "Max quantity in cart" or "Coming Soon" (when `shopifyVariantId` is null) states.
+- Reads grind from sessionStorage on add-to-cart.
 
 ### Server Components
 
@@ -104,13 +122,15 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 **`BatchCard.tsx`** — Single batch card.
 - Inline `FreshnessMeter` sub-function (10-segment progress bar).
 - Inline `MetaCell` sub-component for metadata display with icons.
+- Header identity block: farm name (h3) → Batch `{batchCode}` in Geist Mono → Region `{origin}`.
+- MetaCell grid: Lot (`farm-lot.svg`), Process, Varietal, Roast, Roast Date, Elevation.
 - Farm images `farm1.jpg`–`farm6.jpg` map to farm IDs 1–6.
 - Farms 4 and 5 use `scale-[1.15]` base zoom to compensate for white borders.
 - Hover: `translateY(-4px)` + border color shift.
 
 **`BatchGridSkeleton.tsx`** — Suspense fallback. 3 pulse-animated skeleton cards. Inline `SkeletonCard` sub-component.
 
-**`OurFarmers.tsx`** — Fetches farmers from API. Grid of farmer cards (3 cols desktop). Farmer images `farmer1.jpg`–`farmer3.jpg`. Links to `/farmers/[farmerId]`.
+**`OurFarmers.tsx`** — Fetches farmers from API. Grid of farmer cards (3 cols desktop). Full-bleed `aspect-[3/4]` portrait cards with gradient overlay (`from-black/70 via-black/30 to-black/10`); name, location, and story snippet are overlaid at bottom. Hover scales image and deepens overlay. Farmer images `farmer1.jpg`–`farmer3.jpg`. Links to `/farmers/[farmerId]`.
 
 **`WhyReyna.tsx`** — 4-column benefit cards: Origin-focused, Fresh roast batches, Traceable lots, Brew-method aware. Each with icon + title + description.
 
@@ -125,12 +145,14 @@ ApiFarm       { id, name, region?, elevation_m, farmer_id }
 ApiAward      { title, place_or_score, description? }
 ApiLot        { id, farm_id, lot_code, process, varietal, arrival_date, notes[], awards? }
 ApiRoastBatch { id, lot_id, location_id, batch_code, roast_level, roast_date (Unix secs),
-                roasted_weight_lb, remaining_roasted_weight_lb, note, basePrice, status, created_at }
+                roasted_weight_lb, remaining_roasted_weight_lb, note, basePrice, status,
+                created_at, shopify_variant_id? }
 ApiFarmer     { id, name, region?, country?, story?, photo-url?, created-at? }
 
 // View models
 BatchCardViewModel    { batchId, batchCode, farmId, farmName, lotCode, origin, process, varietal,
-                        roastLevel, roastDate, notes[], basePrice, remainingWeightLb, elevation|null }
+                        roastLevel, roastDate, notes[], basePrice, remainingWeightLb, elevation|null,
+                        shopifyVariantId: string|null }
 FarmerPageViewModel   { farmerId, farmerName, location, story|null, hasPortrait, portraitSrc|null, farms[] }
 FarmSectionViewModel  { farmId, farmName, region|null, elevationM|null, lots[] }
 LotCardViewModel      { lotId, lotCode, varietal, process, awards, hasAwards }
@@ -161,6 +183,18 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 
 > Note: The spec files say "20% off" and "50% off" but the **actual code** uses 10% and 30% discounts (90% and 70% of base price).
 
+### `src/app/lib/shopify.ts` — Shopify Storefront API
+
+Uses `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` and `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` env vars. API version: `2025-01`. All cart mutations attach `Grind Preference` and `Batch Code` as line item attributes.
+
+Exports:
+- `ShopifyCart` interface
+- `createCartWithItem(variantId, quantity, grindType, batchCode)` — `cartCreate` mutation
+- `addCartItem(cartId, variantId, quantity, grindType, batchCode)` — `cartLinesAdd` mutation
+- `updateCartItem(cartId, lineId, quantity)` — `cartLinesUpdate` mutation
+- `removeCartItem(cartId, lineId)` — `cartLinesRemove` mutation
+- `getCart(cartId)` — `cart` query, returns `ShopifyCart | null`
+
 ### `src/app/lib/api.ts` — Data fetching
 
 **MockAPI.io base URL:** `https://69b80a0effbcd02860970059.mockapi.io`
@@ -186,7 +220,7 @@ Exports:
 - **Headings (h1–h6)** — Copperplate, uppercase, 500 weight, `#6a4322` brown, line-height 1.05
 - **Body** — Geist Sans (next/font/google); Geist Mono for batch codes
 - **Adobe Typekit** — Copperplate loaded via `zgl0jvg.css` in `layout.tsx`
-- **Custom animation** — `animate-bean-pulse` (keyframes in globals.css): opacity + scale, 2s infinite; used on hero scroll-down arrow
+- **Custom animations** — `animate-bean-pulse` (keyframes in globals.css): opacity + scale, 2s infinite; used on hero scroll-down arrow. `hero-card-enter` (keyframes in globals.css): fade + translateY(20px→0), 0.6s ease-out with 0.15s delay; applied via `.hero-card-enter` class
 - **Hex colors in className** — extensive use of `bg-[#f4ede4]`, `text-[#6b3e26]`, etc.
 
 ### Color palette
@@ -224,8 +258,13 @@ Exports:
 ### Process images (3 JPEG)
 `wash-process.jpeg`, `honey-process.jpeg`, `natrural-process.jpeg`
 
+### Mobile images
+`mobile-hero.jpg` — hero background for mobile viewports
+`varietal.jpg` — varietals section background for mobile (< 768px)
+`mobile-varietal-bg.jpg` — alternate mobile varietal bg (not currently used)
+
 ### Other SVGs
-`honduras-regions.svg` (map), `varietal-bg.jpg` (varietals section background), `calendar.svg`, `elevation.svg`, `process.svg`, `roast.svg`, `coffee-plant.svg`, `coffee-plant-grid.svg`, `origin_1.svg`, `fresh_1.svg`, `trace_1.svg`, `drip_1.svg`
+`honduras-regions.svg` (map), `varietal-bg.jpg` (varietals section background, desktop 768px+), `calendar.svg`, `elevation.svg`, `process.svg`, `roast.svg`, `coffee-plant.svg`, `coffee-plant-grid.svg`, `origin_1.svg`, `fresh_1.svg`, `trace_1.svg`, `drip_1.svg`, `farm-lot.svg` (lot icon in BatchCard metadata grid)
 
 ### Reference PNGs
 `locationResource.png`, `roastbatchresource.png` — spec/design references only
@@ -237,11 +276,14 @@ Exports:
 | State | Mechanism | Scope |
 |---|---|---|
 | Filtered batch count | `BatchCountContext` (React context) | Page-wide |
+| Cart | `CartContext` (React context) + localStorage (`cafe-reyna-cart`) | App-wide / persistent |
 | Grind selection | sessionStorage (`cafe-reyna-grind`) | Session |
 | URL filters (process, region, roast, varietal) | URL searchParams | Shareable |
 | Local filters (farm, lot, notes, dateSort) | sessionStorage in `BatchGridClient` | Session |
 
 `BatchCountProvider` wraps the entire homepage. `BatchGridClient` calls `setFilteredCount` after every filter change. `ShopCTAButton` reads `filteredCount` to customize its label.
+
+`CartProvider` wraps the root layout (`layout.tsx`) so cart state is available on all pages. `CartDrawer` is also rendered at root level. Cart ID is persisted to localStorage; on mount `CartProvider` rehydrates from Shopify via `getCart`.
 
 ---
 
@@ -259,10 +301,9 @@ Exports:
 
 ## Not Yet Implemented
 
-- Cart / Shopify integration (buttons exist but link nowhere)
-- Checkout flow and payment
+- Checkout flow and payment (cart exists; checkout redirects to Shopify via `checkoutUrl`)
 - Customer authentication
 - Bulk orders section (referenced in spec)
-- `RoastBatchVariantMap` table for Shopify variant mapping
-- Quantity control on batch detail page (buttons render but don't affect cart)
+- `RoastBatchVariantMap` table for Shopify variant mapping (currently `shopify_variant_id` stored directly on `ApiRoastBatch`)
 - Farmer CMS / content management
+- Pricing display in CartDrawer (Shopify price data not yet fetched into cart lines)

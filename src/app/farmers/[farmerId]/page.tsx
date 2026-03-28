@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { fetchFarmerPageData } from '../../lib/api';
+import { CartButton } from '@/app/components/CartContext';
+import { HamburgerMenu } from '@/app/components/HamburgerMenu';
 import type { ApiAward, FarmSectionViewModel, LotCardViewModel } from '../../lib/types';
 
 interface FarmerPageProps {
@@ -126,7 +128,7 @@ export default async function FarmerPage({ params }: FarmerPageProps) {
       <main className="mx-auto flex max-w-7xl flex-col gap-16 px-6 pb-24 pt-6 sm:px-8 md:px-10">
         {/* Header */}
         <header>
-          <div className="flex items-center justify-between border-b border-[#e3d7c5] pb-4">
+          <div className="relative flex items-center justify-between border-b border-[#e3d7c5] pb-4">
             <Link href="/#our-farmers">
               <Image
                 src="/crown-logo.png"
@@ -136,12 +138,10 @@ export default async function FarmerPage({ params }: FarmerPageProps) {
                 className="h-[35px] w-auto object-contain"
               />
             </Link>
-            <button
-              type="button"
-              className="cursor-pointer rounded-full border border-[#cdbda7] px-4 py-1 text-base"
-            >
-              Cart
-            </button>
+            <div className="flex items-center gap-3">
+              <CartButton />
+              <HamburgerMenu basePath="/" />
+            </div>
           </div>
         </header>
 

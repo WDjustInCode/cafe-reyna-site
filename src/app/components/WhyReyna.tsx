@@ -5,7 +5,7 @@ const cards = [
     icon: '/origin_1.svg',
     title: 'Origin-focused',
     description:
-      'Every bag traces back to a specific farm and lot in Honduras. No blends, no mystery origins — just single-source coffee you can follow.',
+      'Every cup traces back to a specific farm and lot in Honduras. No blends, no mystery origins — just single-source coffee you can follow.',
     iconClass: 'h-20 w-20 object-contain md:h-24 md:w-24',
   },
   {

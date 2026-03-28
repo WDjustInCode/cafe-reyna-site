@@ -166,7 +166,7 @@ export function CartButton() {
     <button
       type="button"
       onClick={openCart}
-      className="relative cursor-pointer rounded-full border border-[#cdbda7] px-4 py-1 text-base"
+      className="relative cursor-pointer rounded-lg border border-[#cdbda7] px-4 py-1 text-base"
     >
       Cart
       {itemCount > 0 && (

@@ -10,6 +10,7 @@ import {
 } from '@/app/lib/freshness';
 import { BatchBuilderClient } from '@/app/components/BatchBuilderClient';
 import { CartButton } from '@/app/components/CartContext';
+import { HamburgerMenu } from '@/app/components/HamburgerMenu';
 
 interface BatchPageParams {
   batchId: string;
@@ -38,7 +39,7 @@ export default async function BatchPage({ params }: { params: Promise<BatchPageP
       <main className="mx-auto flex max-w-5xl flex-col gap-16 px-6 pb-24 pt-6 sm:px-8 md:px-10">
         {/* Header (shared shell) */}
         <section aria-label="Site header">
-          <div className="flex items-center justify-between border-b border-[#e3d7c5] pb-4">
+          <div className="relative flex items-center justify-between border-b border-[#e3d7c5] pb-4">
             <Link href="/#our-coffee">
               <Image
                 src="/crown-logo.png"
@@ -48,7 +49,10 @@ export default async function BatchPage({ params }: { params: Promise<BatchPageP
                 className="h-[35px] w-auto object-contain"
               />
             </Link>
-            <CartButton />
+            <div className="flex items-center gap-3">
+              <CartButton />
+              <HamburgerMenu basePath="/" />
+            </div>
           </div>
         </section>
 

@@ -86,13 +86,15 @@ export function HonduranVarietals({ varietalInventory }: HonduranVarietalsProps)
   return (
     <section
       aria-label="Common varietals across Honduras"
-      className="relative overflow-hidden py-20 sm:py-24 bg-cover bg-center"
+      className="relative overflow-hidden py-20 sm:py-24"
       style={{
-        backgroundImage: "url('/varietal-bg.jpg')",
         marginLeft: 'calc(-50vw + 50%)',
         width: '100vw',
       }}
     >
+      {/* Background images — mobile vs desktop */}
+      <div className="absolute inset-0 bg-cover bg-center block md:hidden" style={{ backgroundImage: "url('/varietal.jpg')" }} aria-hidden="true" />
+      <div className="absolute inset-0 bg-cover bg-center hidden md:block" style={{ backgroundImage: "url('/varietal-bg.jpg')" }} aria-hidden="true" />
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/75 to-black/40 pointer-events-none" aria-hidden="true" />
 
