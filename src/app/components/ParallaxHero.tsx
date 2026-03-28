@@ -82,7 +82,6 @@ function ParallaxLayer({
       className="absolute inset-0"
       style={{
         transform: `translateY(${translateY}px)`,
-        transition: 'transform 0.1s linear',
         zIndex,
       }}
     >
@@ -99,8 +98,77 @@ function ParallaxLayer({
   );
 }
 
+function MobileHero() {
+  return (
+    <section id="hero" aria-label="Café Reyna hero" className="relative w-full">
+      <div className="relative h-[100dvh] overflow-hidden bg-[#f4ede4]">
+
+        {/* Full-bleed photo — bag visible in lower half */}
+        <Image
+          src="/mobile-hero.jpg"
+          alt="Café Reyna coffee bag"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-bottom"
+        />
+
+        {/* Card — top half, above the bag */}
+        <div
+          className="hero-card-enter absolute left-1/2 top-[72px] w-[75%] -translate-x-1/2"
+          style={{ zIndex: 20 }}
+        >
+          <div className="flex flex-col items-center justify-center rounded-[20px] bg-[#f5ebdc]/95 px-6 py-7 shadow-[0_16px_48px_rgba(24,16,8,0.45)] backdrop-blur-sm">
+            <div className="flex flex-col items-center space-y-3 text-center sm:space-y-5">
+              <p className="text-[clamp(0.6rem,2.5vw,0.875rem)] font-medium uppercase tracking-[0.2em] text-[#a88a64]">
+                100% Arabica · Organic · Honduras
+              </p>
+              <h1 className="text-[clamp(1.1rem,5.5vw,1.875rem)] font-semibold leading-snug tracking-wide text-[#3a2b1c]">
+                Honduran single-origin coffee, roasted fresh in small batches
+              </h1>
+              <div className="flex gap-2 pt-1 sm:gap-3">
+                <a
+                  href="#our-coffee"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById('our-coffee');
+                    if (el) smoothScrollTo(el.offsetTop, 900);
+                  }}
+                  className="rounded-full bg-[#6b3e26] px-[clamp(1rem,5vw,1.75rem)] pb-3 pt-3.5 text-[clamp(0.75rem,3.5vw,1rem)] font-medium leading-none text-white shadow-sm"
+                >
+                  Shop Coffee
+                </a>
+                <a
+                  href="#how-our-coffee-works"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById('how-our-coffee-works');
+                    if (el) smoothScrollTo(el.offsetTop, 900);
+                  }}
+                  className="rounded-full border border-[#cdbda7] px-[clamp(1rem,5vw,1.75rem)] pb-3 pt-3.5 text-[clamp(0.75rem,3.5vw,1rem)] leading-none text-[#4a3a29]"
+                >
+                  Learn More
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function ParallaxHero() {
   const { containerRef, progress } = useSectionScrollProgress();
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   const clampedProgress = Math.min(Math.max(progress, 0), 1);
 
@@ -126,6 +194,8 @@ export function ParallaxHero() {
   const cardPhase = Math.min(Math.max((clampedProgress - 0.55) / 0.45, 0), 1);
   const cardOpacity = cardPhase;
   const cardTranslateY = 80 * (1 - cardPhase);
+
+  if (isMobile) return <MobileHero />;
 
   return (
     <section
@@ -204,7 +274,6 @@ export function ParallaxHero() {
               style={{
                 transform: `translateY(${logoTranslateY}px)`,
                 opacity: logoOpacity,
-                transition: 'transform 0.1s linear, opacity 0.1s linear',
               }}
             />
             <button
@@ -214,7 +283,6 @@ export function ParallaxHero() {
               style={{
                 transform: `translateY(${logoTranslateY}px)`,
                 opacity: logoOpacity,
-                transition: 'transform 0.1s linear, opacity 0.1s linear',
               }}
               onClick={() => {
                 const el = containerRef.current;
