@@ -163,7 +163,7 @@ export function ParallaxHero() {
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
+    const mq = window.matchMedia('(max-width: 991px)');
     const update = () => setIsMobile(mq.matches);
     update();
     mq.addEventListener('change', update);
@@ -205,7 +205,7 @@ export function ParallaxHero() {
     >
       <div ref={containerRef} className="relative h-[260vh]">
         <div className="sticky top-0 h-screen overflow-hidden bg-[#b4d7ff]">
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 max-xl:-left-[100px] max-xl:translate-x-[100px]">
             <ParallaxLayer
               src="/hero image layer 0 (base).png"
               alt="Sky over Honduran mountains"
@@ -213,7 +213,7 @@ export function ParallaxHero() {
               to={layerTransforms[0].to}
               progress={clampedProgress}
               zIndex={0}
-              imageClassName="object-cover object-top"
+              imageClassName="object-cover object-top md:object-right-top"
             />
             <ParallaxLayer
               src="/hero image layer 1.png"
@@ -222,8 +222,7 @@ export function ParallaxHero() {
               to={layerTransforms[1].to}
               progress={landscapeProgress}
               zIndex={1}
-              imageClassName="object-cover"
-              imageStyle={{ objectPosition: 'center 30%' }}
+              imageClassName="object-cover [object-position:center_30%] md:[object-position:right_30%]"
             />
             <ParallaxLayer
               src="/hero image layer 2.png"
@@ -232,7 +231,7 @@ export function ParallaxHero() {
               to={layerTransforms[2].to}
               progress={landscapeProgress}
               zIndex={2}
-              imageClassName="object-cover object-bottom"
+              imageClassName="object-cover object-bottom md:object-right-bottom"
             />
             <ParallaxLayer
               src="/hero image layer 3.png"
@@ -241,7 +240,7 @@ export function ParallaxHero() {
               to={layerTransforms[3].to}
               progress={landscapeProgress}
               zIndex={3}
-              imageClassName="object-cover object-bottom"
+              imageClassName="object-cover object-bottom md:object-right-bottom"
             />
             <ParallaxLayer
               src="/hero image layer 4.png"
@@ -250,7 +249,7 @@ export function ParallaxHero() {
               to={layerTransforms[4].to}
               progress={landscapeProgress}
               zIndex={4}
-              imageClassName="object-cover object-bottom"
+              imageClassName="object-cover object-bottom md:object-right-bottom"
             />
             <ParallaxLayer
               src="/hero image layer 5A.png"
@@ -259,7 +258,7 @@ export function ParallaxHero() {
               to={layerTransforms[5].to}
               progress={landscapeProgress}
               zIndex={5}
-              imageClassName="object-cover object-bottom"
+              imageClassName="object-cover object-bottom md:object-right-bottom"
             />
           </div>
 
@@ -310,7 +309,7 @@ export function ParallaxHero() {
               transition: 'transform 0.12s ease-out, opacity 0.12s ease-out',
             }}
           >
-            <div className="pointer-events-auto w-full max-w-3xl rounded-[40px] bg-[#f5ebdc] px-8 py-10 shadow-[0_40px_120px_rgba(24,16,8,0.55)] lg:px-12 lg:py-12">
+            <div className="pointer-events-auto w-full max-w-3xl md:max-[1440px]:max-w-[50vw] rounded-[40px] bg-[#f5ebdc] px-8 py-10 shadow-[0_40px_120px_rgba(24,16,8,0.55)] lg:px-12 lg:py-12">
               <div className="space-y-6">
                 <p className="text-xs font-medium uppercase tracking-[0.25em] text-[#a88a64]">
                   100% Arabica • Organic • Fresh Roast Batches

@@ -71,6 +71,9 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - Logo fades out + slides up during progress 0–0.4; CTA card fades in during 0.55–1.0.
 - Background: `#b4d7ff`. Container: `h-[260vh]` outer + `sticky top-0 h-screen` inner.
 - Hero layer assets: `/hero image layer 0 (base).png` through `layer 5A.png` in `/public`.
+- **Responsive image positioning:** All 6 layers use `md:object-right-*` — right-justified at 768px+. At `max-xl:` (≤ 1279px) the layers container uses `-left-[100px] translate-x-[100px]` to shift the scene ~100px rightward without exposing the background.
+- **Hero CTA card:** `md:max-[1440px]:max-w-[50vw]` caps the card at 50% viewport width between 768px and 1440px; `max-w-3xl` applies above 1440px.
+- **Mobile breakpoint:** `MobileHero` renders at ≤ 991px (via `matchMedia('(max-width: 991px)')`); parallax version activates at 992px+.
 
 **`StickyHeader.tsx`** — Fixed header that only appears when scrolling **upward** past the hero (260vh). Uses passive scroll + resize listeners. Shows logo, nav links, cart button, and `HamburgerMenu` (mobile only).
 
