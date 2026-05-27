@@ -10,6 +10,7 @@ import { HondurasRegions } from './components/HondurasRegions';
 import { HonduranVarietals } from './components/HonduranVarietals';
 import { OurFarmers } from './components/OurFarmers';
 import { WhyReyna } from './components/WhyReyna';
+import { SubscribeSection } from './components/SubscribeSection';
 import { fetchAllBatchViewModels, fetchRegionInventory, fetchVarietalInventory, fetchProcessInventory } from './lib/api';
 import { BatchCountProvider } from './components/BatchCountContext';
 import { ShopCTAButton } from './components/ShopCTAButton';
@@ -264,8 +265,11 @@ export default async function Home() {
         {/* 8. Why Café Reyna */}
         <WhyReyna />
 
-        {/* 9. Final CTA */}
-        <section
+        {/* 9. Subscribe */}
+        <SubscribeSection />
+
+        {/* Final CTA — hidden until launch */}
+        {/* <section
           id="final-cta"
           aria-label="Final call to action"
           className="space-y-6 rounded-3xl border border-[#e3d7c5] bg-[#efe5d8] px-6 py-10 text-center"
@@ -286,7 +290,7 @@ export default async function Home() {
               Meet the farmers
             </a>
           </div>
-        </section>
+        </section> */}
 
         {/* 10. Footer */}
         <section id="footer" aria-label="Site footer" className="mt-8">

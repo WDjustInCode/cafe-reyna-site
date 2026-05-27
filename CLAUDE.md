@@ -18,6 +18,7 @@ No test suite is configured yet.
 - **Tailwind CSS v4** — uses `@import "tailwindcss"` in globals.css, not the v3 config plugin
 - **TypeScript 5** with strict mode; path alias `@/*` → `./src/*`
 - **No animation library** — motion is pure `requestAnimationFrame` / CSS transforms
+- **Resend** — email API for subscriber capture and transactional email (`resend` npm package)
 
 ---
 
@@ -47,8 +48,9 @@ Wraps everything in `BatchCountProvider`. Section render order:
 8. Process comparison — `ProcessCard` trio (Washed, Honey, Natural)
 9. `RoastGrindSelector`
 10. `WhyReyna`
-11. Final CTA (inline)
-12. Footer (inline)
+11. `SubscribeSection`
+12. Final CTA (inline — **commented out until launch**)
+13. Footer (inline)
 
 ### `src/app/coffee/[batchId]/page.tsx` — Batch Detail / "Build Your Bag" (Server Component)
 Fetches batch by ID via `fetchBatchById`; returns 404 if not found. Computes freshness state, badge label, discounted price, and roast date string server-side, then passes all as props to `BatchBuilderClient`. Header row includes logo link and `CartButton`.
@@ -108,6 +110,17 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - `useCart()`: returns `{ itemCount, isLoading, isCartOpen, cartLines, variantQuantities, openCart, closeCart, addItem, updateItem, removeItem, checkout }`.
 - `CartButton`: pill button with item count badge (capped at "9+"). Opens the cart drawer.
 - `variantQuantities`: `Record<variantId, totalQuantity>` — used by `BatchBuilderClient` to track per-variant cart totals for stock-limit enforcement.
+
+**`SubscribePopup.tsx`** — Pre-launch email capture popup (Client Component).
+- Appears 2s after first visit; suppressed if `localStorage['cafe-reyna-subscribed']` is set.
+- Dismissable with ✕; sets the localStorage key on dismiss or successful submit.
+- Form: first name, last name (2-col grid), email — all required. Name validation regex: `/^[A-Za-zÀ-ÿ'\- ]{1,50}$/`.
+- POSTs `{ firstName, lastName, email }` to `/api/subscribe`.
+- Rendered at root layout level alongside `CartDrawer`. No `backdrop-filter: blur` (causes macOS cursor jank).
+
+**`SubscribeSection.tsx`** — Inline subscribe section on the homepage (Client Component).
+- Same form and API call as `SubscribePopup`; stacked layout with name fields in a 2-col grid.
+- Positioned between `WhyReyna` and the Final CTA.
 
 **`CartDrawer.tsx`** — Slide-in cart panel (right side, fixed, z-50). Locks body scroll when open. Shows line items with inline quantity steppers (decrement to 1 removes the line, ✕ icon at qty 1). Footer shows total bag count and Checkout button that redirects to Shopify checkout URL.
 
@@ -185,6 +198,15 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 | 56+ | Hidden / removed | — |
 
 > Note: The spec files say "20% off" and "50% off" but the **actual code** uses 10% and 30% discounts (90% and 70% of base price).
+
+### `src/app/api/subscribe/route.ts` — Email capture endpoint
+
+POST handler. Accepts `{ firstName, lastName, email }`. Validates all three fields (name regex server-side, email regex). On success:
+1. Calls `resend.contacts.create(...)` to add contact to the Resend Audience (`RESEND_AUDIENCE_ID`)
+2. Sends a styled HTML confirmation email to the subscriber from `justin@cafereyna.com`
+3. Sends a plain-text owner notification to `justblocker@icloud.com`
+
+Both emails fire in parallel via `Promise.all`. Requires `RESEND_API_KEY` and `RESEND_AUDIENCE_ID` env vars.
 
 ### `src/app/lib/shopify.ts` — Shopify Storefront API
 
@@ -283,6 +305,7 @@ Exports:
 | Grind selection | sessionStorage (`cafe-reyna-grind`) | Session |
 | URL filters (process, region, roast, varietal) | URL searchParams | Shareable |
 | Local filters (farm, lot, notes, dateSort) | sessionStorage in `BatchGridClient` | Session |
+| Subscribe popup suppression | localStorage (`cafe-reyna-subscribed`) | Persistent |
 
 `BatchCountProvider` wraps the entire homepage. `BatchGridClient` calls `setFilteredCount` after every filter change. `ShopCTAButton` reads `filteredCount` to customize its label.
 
