@@ -9,7 +9,8 @@ const inputClass =
   'w-full rounded-full border border-[#cdbda7] bg-white px-5 py-3 text-sm text-[#2a2a2a] outline-none placeholder:text-[#a89988] focus:border-[#6b3e26] focus:ring-1 focus:ring-[#6b3e26]';
 
 export function SubscribePopup() {
-  const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,13 +19,20 @@ export function SubscribePopup() {
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY)) return;
-    const timer = setTimeout(() => setVisible(true), 2000);
+    const timer = setTimeout(() => setMounted(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return;
+    const raf = requestAnimationFrame(() => setOpen(true));
+    return () => cancelAnimationFrame(raf);
+  }, [mounted]);
+
   function dismiss() {
     localStorage.setItem(STORAGE_KEY, '1');
-    setVisible(false);
+    setOpen(false);
+    setTimeout(() => setMounted(false), 300);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -63,16 +71,16 @@ export function SubscribePopup() {
     }
   }
 
-  if (!visible) return null;
+  if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
       <div
-        className="absolute inset-0 bg-black/60"
+        className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
         onClick={dismiss}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-md rounded-2xl border border-[#e3d7c5] bg-[#f4ede4] px-8 py-10 shadow-2xl">
+      <div className={`relative w-full max-w-md rounded-2xl border border-[#e3d7c5] bg-[#f4ede4] px-8 py-10 shadow-2xl transition-all duration-300 ease-out ${open ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-3'}`}>
         <button
           onClick={dismiss}
           aria-label="Close"
