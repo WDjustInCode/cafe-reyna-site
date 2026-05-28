@@ -58,7 +58,7 @@ export function SubscribeSection() {
       {status === 'success' ? (
         <div className="space-y-2">
           <p className="text-2xl">☕</p>
-          <h2 className="text-4xl font-semibold text-[#6a4322]">You&apos;re on the list</h2>
+          <h2>You&apos;re on the list</h2>
           <p className="text-sm leading-relaxed text-[#4a4037]">
             We&apos;ll be in touch with launch news, fresh batches, and stories from the farm.
           </p>
@@ -69,7 +69,7 @@ export function SubscribeSection() {
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
               Stay in the loop
             </p>
-            <h2 className="text-4xl font-semibold text-[#6a4322]">
+            <h2>
               We&apos;re launching soon
             </h2>
             <p className="mx-auto max-w-md text-sm leading-relaxed text-[#4a4037]">

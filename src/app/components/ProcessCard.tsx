@@ -69,7 +69,7 @@ export function ProcessCard({ process, title, description, imageSrc, imageAlt, l
 
       <div className="absolute inset-0 flex flex-col justify-end p-6">
         <div className="flex items-center justify-between gap-2.5">
-          <h3 className="text-lg font-semibold !text-[#e8ddd2]">{title}</h3>
+          <h3 className="text-lg !text-[#e8ddd2]">{title}</h3>
           {lbs !== undefined && (
             <span className="relative group/pill">
               <span className="rounded-full bg-[#f4ede4] px-2.5 py-0.5 text-[11px] font-medium text-[#6b3e26]">

@@ -92,7 +92,7 @@ export function SubscribePopup() {
         {status === 'success' ? (
           <div className="space-y-3 text-center">
             <p className="text-2xl">☕</p>
-            <h2 className="text-3xl font-semibold text-[#6a4322]">You&apos;re on the list</h2>
+            <h2 className="text-3xl">You&apos;re on the list</h2>
             <p className="text-sm leading-relaxed text-[#4a4037]">
               We&apos;ll reach out as soon as we launch. Expect fresh batches, farm stories, and early access.
             </p>
@@ -109,7 +109,7 @@ export function SubscribePopup() {
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                 Coming Soon
               </p>
-              <h2 className="text-4xl font-semibold text-[#6a4322]">
+              <h2>
                 Be first to know
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">

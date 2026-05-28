@@ -93,7 +93,7 @@ export function HondurasRegions({ regionInventory }: HondurasRegionsProps) {
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           The Origin
         </p>
-        <h2 className="text-4xl font-semibold">
+        <h2>
           The Coffee Regions of Honduras
         </h2>
         <p className="text-base leading-[1.7] text-[#4a4037]">
@@ -173,7 +173,7 @@ export function HondurasRegions({ regionInventory }: HondurasRegionsProps) {
             ].join(' ')}
           >
             <div className="flex items-start justify-between gap-3">
-              <h3 className="text-base font-semibold text-[#2a2a2a]">
+              <h3 className="text-[#2a2a2a]">
                 {region.name}
               </h3>
               {lbs !== null && (

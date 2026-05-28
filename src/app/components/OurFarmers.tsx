@@ -20,7 +20,7 @@ export async function OurFarmers() {
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           Our Farmers
         </p>
-        <h2 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
+        <h2 className="heading-section">
           The people behind every cup
         </h2>
         <p className="text-base leading-[1.7] text-[#4a4037]">
@@ -53,7 +53,7 @@ export async function OurFarmers() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 transition-opacity duration-500 group-hover:opacity-80" />
               <div className="absolute inset-0 flex flex-col justify-end p-6">
-                <h3 className="text-lg font-semibold !text-[#e8ddd2]">{farmer.name}</h3>
+                <h3 className="text-lg !text-[#e8ddd2]">{farmer.name}</h3>
                 {location && (
                   <p className="mt-0.5 text-xs font-medium uppercase tracking-[0.15em] text-[#c9bfb5]">
                     {location}

@@ -44,17 +44,19 @@ export function ParallaxHero() {
         />
       </div>
 
-      <div className="absolute inset-0 flex items-center justify-start px-6 sm:px-10 md:px-10 lg:px-15 2xl:px-35">
-        <div className="hero-card-enter w-[90%] rounded-[32px] bg-[#f5ebdc] p-8 xlg:p-10 shadow-[0_20px_60px_rgba(24,16,8,0.75)] backdrop-blur-sm md:w-[45vw] lg:w-[43vw] 2xl:w-[40vw] sm:max-w-2xl md:rounded-[40px]">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#000]/50 from-0% to-transparent to-60%" />
+
+      <div className="absolute inset-0 flex items-center justify-start px-6 sm:px-10 md:px-20 lg:px-30 xl:px-40 2xl:px-50">
+        <div className="hero-card-enter w-[90%] rounded-[32px] bg-[#f5ebdc] md:bg-[#000000]/0 p-7 xlg:p-10 md:w-[55vw] lg:w-[43vw] 2xl:w-[40vw] sm:max-w-2xl">
           <div className="space-y-2 lg:space-y-3 xl:space-y-4 2xl:space-y-5">
-            <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-[#a88a64] sm:text-[clamp(0.59rem,0.8vw,0.75rem)]">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-[#a88a64] md:text-[#f5ebdc] sm:text-[clamp(0.59rem,0.8vw,0.75rem)]">
               100% Arabica · Organic · Fresh Roast
             </p>
-            <h1 className="text-[1.65rem] font-semibold leading-snug tracking-wide text-[#3a2b1c] sm:text-[clamp(1rem,2.7vw,2.5rem)]">
-              Awaken your senses with Honduran{' '}
-              <span className="whitespace-nowrap">single-origin</span> coffee
+            <h1 className="heading-hero leading-snug tracking-wide text-[#3a2b1c] md:text-[#f5ebdc]">
+              Honduran{' '}
+              <span className="whitespace-nowrap">single-origin</span> <br />coffee
             </h1>
-            <p className="text-sm leading-relaxed text-[#5b4733] sm:text-[clamp(0.75rem,1.4vw,1rem)] md:hidden lg:block">
+            <p className="text-sm leading-relaxed text-[#5b4733] sm:text-[clamp(0.75rem,1.4vw,1rem)] md:hidden lg:block md:text-[#f5ebdc] lg:w-[25vw]">
               Sourced from friend &amp; family farms in Honduras. Roasted in
               small, transparent batches so every bag you brew tastes like a
               morning in the village.
@@ -67,7 +69,7 @@ export function ParallaxHero() {
                   const el = document.getElementById('our-coffee');
                   if (el) smoothScrollTo(el.offsetTop, 900);
                 }}
-                className="rounded-full bg-[#6b3e26] px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#5a341f] sm:text-[clamp(0.75rem,1.2vw,1rem)]"
+                className="rounded-full bg-[#6b3e26] md:bg-[#f5ebdc] px-6 py-2.5 text-sm sm:text-[clamp(0.75rem,1.2vw,1rem)] font-medium text-white md:text-[#3a2b1c] shadow-sm hover:bg-[#5a341f] hover:text-[#f5ebdc]"
               >
                 Shop Coffee
               </a>
@@ -78,7 +80,7 @@ export function ParallaxHero() {
                   const el = document.getElementById('how-our-coffee-works');
                   if (el) smoothScrollTo(el.offsetTop, 900);
                 }}
-                className="rounded-full border border-[#cdbda7] px-6 py-2.5 text-sm text-[#4a3a29] hover:bg-white/60 sm:text-[clamp(0.75rem,1.2vw,1rem)]"
+                className="rounded-full border border-[#f5ebdc] px-6 py-2.5 text-sm text-[#4a3a29] md:text-[#f5ebdc] hover:bg-white/60 sm:text-[clamp(0.75rem,1.2vw,1rem)] hover:text-[#000]"
               >
                 Learn More
               </a>

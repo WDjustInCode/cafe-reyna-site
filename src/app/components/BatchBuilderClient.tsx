@@ -61,7 +61,7 @@ export function BatchBuilderClient({
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Origin
             </p>
-            <h2 className="mt-2 text-3xl font-semibold">{batch.farmName}</h2>
+            <h2 className="mt-2 text-3xl">{batch.farmName}</h2>
             <p className="mt-1 text-base text-[#4a4037]">{batch.lotCode} · {batch.origin}</p>
             <div className="mt-4 grid gap-3 text-base sm:grid-cols-2">
               <div>
@@ -122,7 +122,7 @@ export function BatchBuilderClient({
                 <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
                   Grind
                 </p>
-                <h3 className="mt-1 text-base font-semibold">
+                <h3 className="mt-1">
                   Choose how you brew.
                 </h3>
               </div>

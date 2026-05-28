@@ -31,7 +31,7 @@ export default async function Home() {
       <StickyHeader />
       <ParallaxHero />
 
-      <main className="mx-auto flex max-w-7xl flex-col gap-80 px-6 pb-24 pt-6 sm:px-8 md:px-10">
+      <main className="mx-auto flex max-w-7xl flex-col gap-40 lg:gap-80 px-6 pb-24 pt-6 sm:px-8 md:px-10">
         {/* 1. Header (always visible after hero) */}
         <section id="header" aria-label="Site header">
           <div className="relative flex items-center justify-between border-b border-[#e3d7c5] pb-4">
@@ -67,7 +67,7 @@ export default async function Home() {
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
               How We Operate
             </p>
-            <h2 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
+            <h2>
               From Honduran farms to your cup
             </h2>
             <p className="text-base leading-[1.7] text-[#4a4037]">
@@ -89,7 +89,7 @@ export default async function Home() {
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                   Step 01
                 </div>
-                <h3 className="text-base font-semibold">Farm &amp; Lot</h3>
+                <h3>Farm &amp; Lot</h3>
               </div>
               <p className="text-base leading-[1.7] text-[#4a4037]">
                 Sourced directly from friend and family-owned farms in Honduras, each lot is
@@ -108,7 +108,7 @@ export default async function Home() {
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                   Step 02
                 </div>
-                <h3 className="text-base font-semibold">Roast Batch</h3>
+                <h3>Roast Batch</h3>
               </div>
               <p className="text-base leading-[1.7] text-[#4a4037]">
                 Small-batch roasted to perfection, with each batch assigned a
@@ -127,7 +127,7 @@ export default async function Home() {
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                   Step 03
                 </div>
-                <h3 className="text-base font-semibold">
+                <h3>
                   Freshness-Based Pricing
                 </h3>
               </div>
@@ -148,7 +148,7 @@ export default async function Home() {
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                   Step 04
                 </div>
-                <h3 className="text-base font-semibold">Your Brew Method</h3>
+                <h3>Your Brew Method</h3>
               </div>
               <p className="text-base leading-[1.7] text-[#4a4037]">
                 Finally, choose the grind that matches your favorite brew method,
@@ -168,7 +168,7 @@ export default async function Home() {
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Our Coffee
             </p>
-            <h2 className="text-4xl font-semibold">Freshly roasted batches</h2>
+            <h2>Freshly roasted batches</h2>
             <p className="max-w-2xl text-base leading-relaxed text-[#4a4037]">
               Browse our latest roast batches, each tied to a specific farm,
               lot, and roast date. Pricing adjusts based on freshness.
@@ -204,7 +204,7 @@ export default async function Home() {
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Process
             </p>
-            <h2 className="text-4xl font-semibold">Wash, honey, and natural</h2>
+            <h2>Wash, honey, and natural</h2>
             <p className="max-w-2xl text-base leading-relaxed text-[#4a4037]">
               Each process shapes the flavor of the cup differently. Select one below to filter
               the batch grid above by processing method.
@@ -274,7 +274,7 @@ export default async function Home() {
           aria-label="Final call to action"
           className="space-y-6 rounded-3xl border border-[#e3d7c5] bg-[#efe5d8] px-6 py-10 text-center"
         >
-          <h2 className="text-4xl font-semibold">
+          <h2>
             Ready for your next roast?
           </h2>
           <p className="text-base leading-relaxed text-[#4a4037]">

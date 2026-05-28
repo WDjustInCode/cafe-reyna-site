@@ -89,7 +89,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
       <div className="flex flex-col flex-1 p-7">
       {/* Identity */}
       <header className="mb-4 space-y-0.5">
-        <h3 className="normal-case text-xl font-semibold leading-tight text-[#2a2a2a]">
+        <h3 className="text-xl normal-case leading-tight text-[#2a2a2a]">
           {vm.farmName}
         </h3>
         <p className="text-base text-[#2a2a2a]"><span className="text-[#7a6a5a]">Batch</span> <span className="font-mono">{vm.batchCode}</span></p>

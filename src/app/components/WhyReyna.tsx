@@ -38,7 +38,7 @@ export function WhyReyna() {
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           Why Café Reyna
         </p>
-        <h2 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
+        <h2 className="heading-section">
           Origin-first. Freshness-driven.
         </h2>
         <p className="text-base leading-[1.7] text-[#4a4037]">
@@ -61,7 +61,7 @@ export function WhyReyna() {
             />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-semibold">{card.title}</h3>
+              <h3>{card.title}</h3>
             </div>
             <p className="text-base leading-[1.7] text-[#4a4037]">
               {card.description}

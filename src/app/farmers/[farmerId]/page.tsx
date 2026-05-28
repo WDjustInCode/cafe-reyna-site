@@ -89,7 +89,7 @@ function FarmSection({ farm }: { farm: FarmSectionViewModel }) {
         </div>
         <div className="space-y-1">
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">Farm</p>
-          <h3 className="text-xl font-semibold">{farm.farmName}</h3>
+          <h3 className="text-xl">{farm.farmName}</h3>
           <div className="flex flex-wrap gap-x-5 gap-y-0.5 text-sm text-[#4a4037]">
             {farm.region && <span>{farm.region}</span>}
             {farm.elevationM != null && (
@@ -169,7 +169,7 @@ export default async function FarmerPage({ params }: FarmerPageProps) {
                     {farmer.location}
                   </p>
                 )}
-                <h1 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
+                <h1>
                   {farmer.farmerName}
                 </h1>
                 {farmer.story && (
