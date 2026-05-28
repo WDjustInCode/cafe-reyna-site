@@ -64,18 +64,15 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 
 ### Client Components
 
-**`ParallaxHero.tsx`** — Multi-layer scroll-driven parallax.
-- Custom hook `useSectionScrollProgress()` returns `{ containerRef, progress: 0–1 }` by tracking scroll within the `h-[260vh]` sticky container.
-- Utility `smoothScrollTo(targetTop, durationMs)` uses ease-out RAF animation.
-- `ParallaxLayer` sub-component takes `from/to` translateY values and interpolates from `progress`.
-- 6 layers (sky is static; layers 1–5 stagger `from` values from 680–2160px).
-- `landscapeProgress` clamps `progress` to 0.15–0.85 range for slower motion.
-- Logo fades out + slides up during progress 0–0.4; CTA card fades in during 0.55–1.0.
-- Background: `#b4d7ff`. Container: `h-[260vh]` outer + `sticky top-0 h-screen` inner.
-- Hero layer assets: `/hero image layer 0 (base).png` through `layer 5A.png` in `/public`.
-- **Responsive image positioning:** All 6 layers use `md:object-right-*` — right-justified at 768px+. At `max-xl:` (≤ 1279px) the layers container uses `-left-[100px] translate-x-[100px]` to shift the scene ~100px rightward without exposing the background.
-- **Hero CTA card:** `md:max-[1440px]:max-w-[50vw]` caps the card at 50% viewport width between 768px and 1440px; `max-w-3xl` applies above 1440px.
-- **Mobile breakpoint:** `MobileHero` renders at ≤ 991px (via `matchMedia('(max-width: 991px)')`); parallax version activates at 992px+.
+**`ParallaxHero.tsx`** — Static full-width image hero with load-in card animation.
+- Background: `hero-2.png.jpg` (2091×887) rendered at natural aspect ratio via `w-full h-auto` — no cropping.
+- Hero card overlaid absolutely, left-aligned with padding, uses `.hero-card-enter` CSS animation (fade + translateY 20px→0, 0.6s, 0.15s delay).
+- `smoothScrollTo(targetTop, durationMs)` utility handles smooth scroll for CTA buttons.
+- Card sizing: `max-w-lg` → `md:max-w-xl` → `lg:max-w-2xl`.
+
+**`ParallaxHeroFull.tsx`** — Original multi-layer scroll-driven parallax hero, preserved for later use.
+- Custom hook `useSectionScrollProgress()`, 6 parallax layers, `MobileHero` (≤ 991px), logo fade, scroll arrow.
+- To restore: rename this file to `ParallaxHero.tsx`.
 
 **`StickyHeader.tsx`** — Fixed header that only appears when scrolling **upward** past the hero (260vh). Uses passive scroll + resize listeners. Shows logo, nav links, cart button, and `HamburgerMenu` (mobile only).
 
