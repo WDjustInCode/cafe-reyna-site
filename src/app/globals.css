@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    font-size: clamp(1rem, 2.7vw, 2.5rem);
+    font-size: clamp(1rem, 10vw, 10rem);
 }
 
 h2 {
