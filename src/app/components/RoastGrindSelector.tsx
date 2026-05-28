@@ -57,7 +57,7 @@ export function RoastGrindSelector() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <div className="space-y-3">
-        <h2 className="text-2xl font-semibold">Choose how you brew</h2>
+        <h2 className="text-4xl font-semibold">Choose how you brew</h2>
         <p className="max-w-md text-base leading-relaxed text-[#4a4037]">
           Every batch is roasted with home brewing in mind. We grind to match your
           brew method, or ship whole bean if you prefer.

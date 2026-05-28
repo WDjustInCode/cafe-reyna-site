@@ -12,7 +12,7 @@ export function StickyHeader() {
   useEffect(() => {
     // Hero is h-[260vh], so original header sits at 260vh from page top.
     // We show the sticky header only after scrolling past that point (upward).
-    const getThreshold = () => window.innerHeight * 2.6;
+    const getThreshold = () => window.innerHeight * 1.3;
 
     const handleScroll = () => {
       const currentY = window.scrollY;

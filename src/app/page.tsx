@@ -67,7 +67,7 @@ export default async function Home() {
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
               How We Operate
             </p>
-            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
               From Honduran farms to your cup
             </h2>
             <p className="text-base leading-[1.7] text-[#4a4037]">
@@ -168,7 +168,7 @@ export default async function Home() {
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Our Coffee
             </p>
-            <h2 className="text-2xl font-semibold">Freshly roasted batches</h2>
+            <h2 className="text-4xl font-semibold">Freshly roasted batches</h2>
             <p className="max-w-2xl text-base leading-relaxed text-[#4a4037]">
               Browse our latest roast batches, each tied to a specific farm,
               lot, and roast date. Pricing adjusts based on freshness.
@@ -204,7 +204,7 @@ export default async function Home() {
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Process
             </p>
-            <h2 className="text-2xl font-semibold">Wash, honey, and natural</h2>
+            <h2 className="text-4xl font-semibold">Wash, honey, and natural</h2>
             <p className="max-w-2xl text-base leading-relaxed text-[#4a4037]">
               Each process shapes the flavor of the cup differently. Select one below to filter
               the batch grid above by processing method.
@@ -274,7 +274,7 @@ export default async function Home() {
           aria-label="Final call to action"
           className="space-y-6 rounded-3xl border border-[#e3d7c5] bg-[#efe5d8] px-6 py-10 text-center"
         >
-          <h2 className="text-2xl font-semibold">
+          <h2 className="text-4xl font-semibold">
             Ready for your next roast?
           </h2>
           <p className="text-base leading-relaxed text-[#4a4037]">

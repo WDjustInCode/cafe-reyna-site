@@ -105,7 +105,7 @@ export function HonduranVarietals({ varietalInventory }: HonduranVarietalsProps)
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#f4ede4]/60">
               Honduran Coffee
             </p>
-            <h2 className="text-2xl font-semibold text-[#f4ede4]!" >Common Varietals Across Honduras</h2>
+            <h2 className="text-4xl font-semibold text-[#f4ede4]!" >Common Varietals Across Honduras</h2>
             <p className="max-w-2xl text-base leading-relaxed text-[#f4ede4]/80">
               Honduran coffee is shaped not only by region, altitude, and processing, but also by varietal.
               These are some of the coffee plant varieties most commonly grown across the country&rsquo;s major

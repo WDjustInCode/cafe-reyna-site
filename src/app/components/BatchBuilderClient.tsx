@@ -61,7 +61,7 @@ export function BatchBuilderClient({
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Origin
             </p>
-            <h2 className="mt-2 text-xl font-semibold">{batch.farmName}</h2>
+            <h2 className="mt-2 text-3xl font-semibold">{batch.farmName}</h2>
             <p className="mt-1 text-base text-[#4a4037]">{batch.lotCode} · {batch.origin}</p>
             <div className="mt-4 grid gap-3 text-base sm:grid-cols-2">
               <div>

@@ -64,7 +64,7 @@ export default async function BatchPage({ params }: { params: Promise<BatchPageP
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
             Current Roast Batch
           </p>
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-4xl font-semibold">
             <span className="font-mono">{batch.batchCode}</span>
           </h1>
           <p className="max-w-2xl text-base leading-relaxed text-[#4a4037]">

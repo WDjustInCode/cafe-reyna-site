@@ -38,7 +38,7 @@ export function WhyReyna() {
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           Why Café Reyna
         </p>
-        <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+        <h2 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
           Origin-first. Freshness-driven.
         </h2>
         <p className="text-base leading-[1.7] text-[#4a4037]">

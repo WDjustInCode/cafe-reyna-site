@@ -169,7 +169,7 @@ export default async function FarmerPage({ params }: FarmerPageProps) {
                     {farmer.location}
                   </p>
                 )}
-                <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+                <h1 className="text-[2.7rem] font-semibold tracking-tight md:text-[3.24rem]">
                   {farmer.farmerName}
                 </h1>
                 {farmer.story && (

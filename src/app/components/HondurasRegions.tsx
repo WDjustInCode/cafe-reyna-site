@@ -93,7 +93,7 @@ export function HondurasRegions({ regionInventory }: HondurasRegionsProps) {
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           The Origin
         </p>
-        <h2 className="text-2xl font-semibold">
+        <h2 className="text-4xl font-semibold">
           The Coffee Regions of Honduras
         </h2>
         <p className="text-base leading-[1.7] text-[#4a4037]">
