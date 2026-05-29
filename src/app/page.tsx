@@ -106,10 +106,10 @@ export default async function Home() {
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                   Step 02
                 </div>
-                <h3>Roast Batch</h3>
+                <h3>Small-Batch Roasts</h3>
               </div>
               <p className="text-base leading-[1.7] text-[#4a4037]">
-                Small-batch roasted to perfection, with each batch assigned a
+                Weekly roasts with each batch assigned a
                 unique ID for full transparency.
               </p>
             </div>

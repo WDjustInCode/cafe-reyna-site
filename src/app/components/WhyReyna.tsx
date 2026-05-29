@@ -27,7 +27,7 @@ const cards = [
 export function WhyReyna() {
   return (
     <section id="why-cafe-reyna" aria-label="Why Café Reyna" className="space-y-16">
-      <header className="space-y-3 max-w-2xl">
+      <header className="space-y-3">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           Why Café Reyna
         </p>
