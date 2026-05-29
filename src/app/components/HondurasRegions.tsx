@@ -89,14 +89,14 @@ export function HondurasRegions({ regionInventory }: HondurasRegionsProps) {
       className="space-y-14"
     >
       {/* Intro Band */}
-      <header className="space-y-3 max-w-2xl">
+      <header className="space-y-3">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           The Origin
         </p>
         <h2>
           The Coffee Regions of Honduras
         </h2>
-        <p className="text-base leading-[1.7] text-[#4a4037]">
+        <p className="text-base leading-[1.7] text-[#4a4037] max-w-3xl">
           Honduras is one of the most diverse coffee-producing countries in the
           world. From high-altitude mountain farms to humid forest
           microclimates, each region expresses a distinct cup shaped by

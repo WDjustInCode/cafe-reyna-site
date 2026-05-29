@@ -16,14 +16,14 @@ export async function OurFarmers() {
 
   return (
     <section id="our-farmers" aria-label="Our farmers" className="space-y-16">
-      <header className="max-w-2xl space-y-3">
+      <header className="space-y-3">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
           Our Farmers
         </p>
         <h2 className="heading-section">
           The people behind every cup
         </h2>
-        <p className="text-base leading-[1.7] text-[#4a4037]">
+        <p className="text-base leading-[1.7] text-[#4a4037] max-w-3xl">
           Café Reyna sources directly from friend and family-owned farms in
           Honduras. Every batch traces back to one of these growers.
         </p>
