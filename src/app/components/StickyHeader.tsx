@@ -10,22 +10,27 @@ export function StickyHeader() {
   const lastScrollY = useRef(0);
 
   useEffect(() => {
-    // Hero is h-[260vh], so original header sits at 260vh from page top.
-    // We show the sticky header only after scrolling past that point (upward).
-    const getThreshold = () => window.innerHeight * 1.3;
+    let pastHero = false;
+
+    const heroEl = document.getElementById('hero');
+    const observer = heroEl
+      ? new IntersectionObserver(([entry]) => { pastHero = !entry.isIntersecting; }, { threshold: 0 })
+      : null;
+    observer?.observe(heroEl!);
 
     const handleScroll = () => {
       const currentY = window.scrollY;
-      const pastThreshold = currentY > getThreshold();
       const scrollingUp = currentY < lastScrollY.current;
-
-      setVisible(pastThreshold && scrollingUp);
+      setVisible(pastHero && scrollingUp);
       lastScrollY.current = currentY;
     };
 
     lastScrollY.current = window.scrollY;
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer?.disconnect();
+    };
   }, []);
 
   return (

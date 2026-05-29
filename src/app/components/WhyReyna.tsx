@@ -10,7 +10,7 @@ const cards = [
   },
   {
     icon: '/fresh_1.svg',
-    title: 'Fresh roast batches',
+    title: 'Fresh roasts',
     description:
       'We roast in small batches and price by age. The fresher the roast, the higher the price. Older batches get discounted — never hidden.',
     iconClass: 'h-[62px] w-[62px] object-contain md:h-[72px] md:w-[72px]',
