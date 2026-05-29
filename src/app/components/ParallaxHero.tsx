@@ -49,9 +49,9 @@ export function ParallaxHero() {
       {/* Desktop gradient: left-to-right */}
       <div className="pointer-events-none absolute inset-0 hidden md:block bg-gradient-to-r from-[#000]/50 from-0% to-transparent to-60%" />
 
-      <div className="absolute inset-0 flex items-start md:items-center justify-center md:justify-start pt-8 sm:pt-12 px-6 sm:px-10 md:px-20 lg:px-30 xl:px-40 2xl:px-50">
-        <div className="hero-card-enter w-[90%] rounded-none bg-transparent p-0 md:w-[55vw] lg:w-[43vw] 2xl:w-[40vw] sm:max-w-2xl text-center md:text-left">
-          <div className="space-y-2 lg:space-y-3 xl:space-y-4 2xl:space-y-5">
+      <div className="absolute inset-0 flex items-start md:items-center justify-center md:justify-start pt-8 sm:pt-12 md:pt-2 px-6 sm:px-10 md:px-20 lg:px-30 xl:px-40 2xl:px-50">
+        <div className="hero-card-enter w-[90%] rounded-none bg-transparent p-0 md:w-[55vw] lg:w-[45vw] 2xl:w-[40vw] sm:max-w-2xl text-center md:text-left">
+          <div className="space-y-2 lg:space-y-2 xl:space-y-4 2xl:space-y-5">
             <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-[#f5ebdc] sm:text-[clamp(0.59rem,0.8vw,0.75rem)]">
               100% Arabica · Organic · Fresh Roast
             </p>
@@ -59,10 +59,9 @@ export function ParallaxHero() {
               Honduran{' '}
               <span className="whitespace-nowrap">single-origin</span> <br />coffee
             </h1>
-            <p className="text-sm leading-relaxed text-[#f5ebdc]/90 sm:text-[clamp(0.75rem,1.4vw,1rem)] md:hidden lg:block lg:w-[25vw]">
+            <p className="sm:text-lg leading-relaxed text-[#f5ebdc]/90 md:hidden lg:block lg:w-[35vw]">
               Sourced from friend &amp; family farms in Honduras. Roasted in
-              small, transparent batches so every bag you brew tastes like a
-              morning in the village.
+              small, transparent batched. Priced by freshness.
             </p>
             <div className="flex flex-wrap gap-3 pt-1 justify-center md:justify-start">
               <a
