@@ -45,7 +45,7 @@ h2 {
 }
 
 h3 {
-    font-size: clamp(1rem, 5vw, 1.8rem);
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
     color: #6a4421;
 }
 
@@ -69,6 +69,11 @@ h5 {
 
     h2 {
         font-size: clamp(1.75rem, 2.9vw, 2.5rem);
+    }
+
+    h3 {
+        font-size: clamp(1.2rem, 2vw, 1.8rem);
+        color: #6a4421;
     }
 
 }
