@@ -22,13 +22,6 @@ const cards = [
       'Each lot comes from one farm, processed consistently. You see the farm, the variety, the process — before you buy.',
     iconClass: 'h-[72px] w-[72px] object-contain md:h-[80px] md:w-[80px]',
   },
-  {
-    icon: '/drip_1.svg',
-    title: 'Whole bean, always',
-    description:
-      'Every bag ships whole bean. Grind fresh before each brew for peak flavor and aroma — the way specialty coffee is meant to be enjoyed.',
-    iconClass: 'h-20 w-20 object-contain md:h-24 md:w-24',
-  },
 ];
 
 export function WhyReyna() {
@@ -47,7 +40,7 @@ export function WhyReyna() {
         </p>
       </header>
 
-      <div className="grid gap-x-12 gap-y-14 md:grid-cols-4 md:gap-x-16">
+      <div className="grid gap-x-12 gap-y-14 md:grid-cols-3 md:gap-x-16">
         {cards.map((card) => (
           <div key={card.title} className="flex flex-col gap-6">
             <div className="flex h-24 items-center md:h-28">

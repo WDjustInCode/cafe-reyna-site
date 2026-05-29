@@ -5,7 +5,6 @@ import { StickyHeader } from './components/StickyHeader';
 import { ProcessCard } from './components/ProcessCard';
 import { BatchGrid } from './components/BatchGrid';
 import { BatchGridSkeleton } from './components/BatchGridSkeleton';
-import { RoastGrindSelector } from './components/RoastGrindSelector';
 import { HondurasRegions } from './components/HondurasRegions';
 import { HonduranVarietals } from './components/HonduranVarietals';
 import { OurFarmers } from './components/OurFarmers';
@@ -13,7 +12,6 @@ import { WhyReyna } from './components/WhyReyna';
 import { SubscribeSection } from './components/SubscribeSection';
 import { fetchAllBatchViewModels, fetchRegionInventory, fetchVarietalInventory, fetchProcessInventory } from './lib/api';
 import { BatchCountProvider } from './components/BatchCountContext';
-import { ShopCTAButton } from './components/ShopCTAButton';
 import { CartButton } from './components/CartContext';
 import { HamburgerMenu } from './components/HamburgerMenu';
 
@@ -138,7 +136,7 @@ export default async function Home() {
             </div>
             <div className="flex flex-col gap-6">
               <Image
-                src="/brew.svg"
+                src="/whole-bean.svg"
                 alt="Brew method"
                 width={120}
                 height={120}
@@ -245,20 +243,6 @@ export default async function Home() {
                 </div>
               );
             })()}
-          </Suspense>
-        </section>
-
-        {/* 6. Roast */}
-        <section
-          id="roast-and-grind"
-          aria-label="Roast options"
-          className="space-y-3"
-        >
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
-            Roast
-          </p>
-          <Suspense fallback={null}>
-            <RoastGrindSelector />
           </Suspense>
         </section>
 
