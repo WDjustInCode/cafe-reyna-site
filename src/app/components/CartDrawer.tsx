@@ -3,15 +3,6 @@
 import { useEffect } from 'react';
 import { useCart } from './CartContext';
 
-const GRIND_LABELS: Record<string, string> = {
-  'whole-bean': 'Whole Bean',
-  'espresso': 'Espresso',
-  'moka-pot': 'Moka Pot',
-  'drip': 'Drip',
-  'pour-over': 'Pour Over',
-  'french-press': 'French Press',
-};
-
 export function CartDrawer() {
   const { isCartOpen, closeCart, cartLines, itemCount, isLoading, updateItem, removeItem, checkout } = useCart();
 
@@ -74,9 +65,6 @@ export function CartDrawer() {
                   <div className="flex-1 space-y-0.5">
                     <p className="font-mono text-sm font-semibold text-[#2a2a2a]">
                       {line.batchCode || '12oz Bag'}
-                    </p>
-                    <p className="text-xs text-[#7a6a5a]">
-                      {GRIND_LABELS[line.grindType] ?? line.grindType}
                     </p>
                   </div>
 

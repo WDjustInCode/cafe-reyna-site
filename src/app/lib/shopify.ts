@@ -66,7 +66,6 @@ interface CartCreateData {
 export async function createCartWithItem(
   variantId: string,
   quantity: number,
-  grindType: string,
   batchCode: string,
 ): Promise<ShopifyCart> {
   const data = await storefrontFetch<CartCreateData>(
@@ -83,7 +82,6 @@ export async function createCartWithItem(
             merchandiseId: variantId,
             quantity,
             attributes: [
-              { key: 'Grind Preference', value: grindType },
               { key: 'Batch Code', value: batchCode },
             ],
           },
@@ -105,7 +103,6 @@ export async function addCartItem(
   cartId: string,
   variantId: string,
   quantity: number,
-  grindType: string,
   batchCode: string,
 ): Promise<ShopifyCart> {
   const data = await storefrontFetch<CartLinesAddData>(
@@ -122,7 +119,6 @@ export async function addCartItem(
           merchandiseId: variantId,
           quantity,
           attributes: [
-            { key: 'Grind Preference', value: grindType },
             { key: 'Batch Code', value: batchCode },
           ],
         },

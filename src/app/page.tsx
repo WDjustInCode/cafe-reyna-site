@@ -148,11 +148,11 @@ export default async function Home() {
                 <div className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
                   Step 04
                 </div>
-                <h3>Your Brew Method</h3>
+                <h3>Whole Bean Shipping</h3>
               </div>
               <p className="text-base leading-[1.7] text-[#4a4037]">
-                Finally, choose the grind that matches your favorite brew method,
-                or keep the beans whole if you love to grind fresh at home.
+                Every bag ships whole bean. Grind fresh before each brew for
+                peak flavor — your grinder, your way.
               </p>
             </div>
           </div>
@@ -248,14 +248,14 @@ export default async function Home() {
           </Suspense>
         </section>
 
-        {/* 6. Roast + Grind */}
+        {/* 6. Roast */}
         <section
           id="roast-and-grind"
-          aria-label="Roast and grind options"
+          aria-label="Roast options"
           className="space-y-3"
         >
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
-            Roast &amp; Grind
+            Roast
           </p>
           <Suspense fallback={null}>
             <RoastGrindSelector />

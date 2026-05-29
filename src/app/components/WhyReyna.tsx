@@ -24,9 +24,9 @@ const cards = [
   },
   {
     icon: '/drip_1.svg',
-    title: 'Brew-method aware',
+    title: 'Whole bean, always',
     description:
-      'Grind options are labeled by brew method, not technical jargon. Pick your brewer, get the right grind.',
+      'Every bag ships whole bean. Grind fresh before each brew for peak flavor and aroma — the way specialty coffee is meant to be enjoyed.',
     iconClass: 'h-20 w-20 object-contain md:h-24 md:w-24',
   },
 ];

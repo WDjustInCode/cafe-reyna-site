@@ -11,7 +11,6 @@ export interface CartLine {
   variantId: string;
   quantity: number;
   batchCode: string;
-  grindType: string;
 }
 
 interface CartContextValue {
@@ -22,7 +21,7 @@ interface CartContextValue {
   variantQuantities: Record<string, number>;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (variantId: string, quantity: number, grindType: string, batchCode: string) => Promise<void>;
+  addItem: (variantId: string, quantity: number, batchCode: string) => Promise<void>;
   updateItem: (lineId: string, quantity: number) => Promise<void>;
   removeItem: (lineId: string) => Promise<void>;
   checkout: () => void;
@@ -38,7 +37,6 @@ function parseLines(cart: ShopifyCart): CartLine[] {
       variantId: node.merchandise.id,
       quantity: node.quantity,
       batchCode: attrs['Batch Code'] ?? '',
-      grindType: attrs['Grind Preference'] ?? '',
     };
   });
 }
@@ -94,14 +92,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       .catch(() => localStorage.removeItem(CART_STORAGE_KEY));
   }, []);
 
-  async function addItem(variantId: string, quantity: number, grindType: string, batchCode: string) {
+  async function addItem(variantId: string, quantity: number, batchCode: string) {
     setIsLoading(true);
     try {
       let cart;
       if (cartId) {
-        cart = await addCartItem(cartId, variantId, quantity, grindType, batchCode);
+        cart = await addCartItem(cartId, variantId, quantity, batchCode);
       } else {
-        cart = await createCartWithItem(variantId, quantity, grindType, batchCode);
+        cart = await createCartWithItem(variantId, quantity, batchCode);
         localStorage.setItem(CART_STORAGE_KEY, cart.id);
       }
       applyCart(cart, setters);

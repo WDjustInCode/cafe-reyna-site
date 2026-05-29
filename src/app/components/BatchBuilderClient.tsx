@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import type { BatchCardViewModel } from '@/app/lib/types';
 import type { FreshnessState } from '@/app/lib/freshness';
-import { GrindSelectorGrid } from './GrindSelectorGrid';
 import { useCart } from './CartContext';
 
 interface BatchBuilderClientProps {
@@ -43,9 +42,7 @@ export function BatchBuilderClient({
   const handleAddToCart = async () => {
     if (!batch.shopifyVariantId || canAdd === 0) return;
     const safeQty = Math.min(quantity, canAdd);
-    let grind = 'whole-bean';
-    try { grind = sessionStorage.getItem('cafe-reyna-grind') ?? 'whole-bean'; } catch { /* ignore */ }
-    await addItem(batch.shopifyVariantId, safeQty, grind, batch.batchCode);
+    await addItem(batch.shopifyVariantId, safeQty, batch.batchCode);
   };
 
   return (
@@ -115,21 +112,6 @@ export function BatchBuilderClient({
 
         {/* Selection Area */}
         <section aria-label="Selection controls" className="space-y-8">
-          {/* Grind grid */}
-          <div className="space-y-3">
-            <div className="flex items-baseline justify-between">
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
-                  Grind
-                </p>
-                <h3 className="mt-1">
-                  Choose how you brew.
-                </h3>
-              </div>
-            </div>
-            <GrindSelectorGrid />
-          </div>
-
           {/* Quantity control */}
           <div className="space-y-3">
             <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
@@ -201,7 +183,6 @@ export function BatchBuilderClient({
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
             Selections
           </p>
-          <p>Grind: (select above)</p>
           <p>Quantity: {quantity} × 12oz bag{quantity > 1 ? 's' : ''}</p>
         </div>
         <div className="space-y-2 border-t border-[#e3d7c5] pt-4 text-base">
