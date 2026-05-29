@@ -110,7 +110,7 @@ export function SubscribePopup() {
                 Coming Soon
               </p>
               <h2>
-                Be first to know
+                Be the first to know
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
                 Café Reyna is launching soon. Drop your email and we&apos;ll notify you the moment fresh roast batches go live.

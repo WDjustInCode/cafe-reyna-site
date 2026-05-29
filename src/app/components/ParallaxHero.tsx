@@ -52,7 +52,7 @@ export function ParallaxHero() {
       <div className="absolute inset-0 flex items-start md:items-center justify-center md:justify-start pt-8 sm:pt-12 md:pt-2 px-6 sm:px-10 md:px-20 lg:px-30 xl:px-40 2xl:px-50">
         <div className="hero-card-enter w-[90%] rounded-none bg-transparent p-0 md:w-[55vw] lg:w-[45vw] 2xl:w-[40vw] sm:max-w-2xl text-center md:text-left">
           <div className="space-y-2 lg:space-y-2 xl:space-y-4 2xl:space-y-5">
-            <p className="text-[0.65rem] font-medium uppercase tracking-[0.25em] text-[#f5ebdc] sm:text-[clamp(0.59rem,0.8vw,0.75rem)]">
+            <p className="text-[0.6rem] font-medium uppercase tracking-[0.25em] text-[#f5ebdc] sm:text-[clamp(0.59rem,0.8vw,0.75rem)]">
               100% Arabica · Organic · Fresh Roast
             </p>
             <h1 className="heading-hero leading-snug tracking-wide text-[#f5ebdc]">
