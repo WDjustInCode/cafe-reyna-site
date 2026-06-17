@@ -40,7 +40,7 @@ h1 {
 }
 
 h2 {
-    font-size: clamp(1rem, 8vw, 8rem);
+    font-size: clamp(1rem, 7vw, 3rem);
     color: #6a4421;
 }
 

@@ -1,6 +1,20 @@
 'use client';
 
 import Image from 'next/image';
+import { useRive, Layout, Fit, Alignment } from '@rive-app/react-canvas';
+
+function HeroRive() {
+  const { RiveComponent } = useRive({
+    src: '/hero-desktop-macaw.riv',
+    autoplay: true,
+    layout: new Layout({ fit: Fit.Fill, alignment: Alignment.Center }),
+  });
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      <RiveComponent style={{ width: '100%', height: '100%' }} />
+    </div>
+  );
+}
 
 function smoothScrollTo(targetTop: number, durationMs: number) {
   const startTop = window.scrollY;
@@ -32,9 +46,9 @@ export function ParallaxHero() {
           className="w-full h-auto"
         />
       </div>
-      <div className="hidden md:block">
+      <div className="hidden md:block relative">
         <Image
-          src="/hero-2.png.jpg"
+          src="/hero-background-root.jpg"
           alt="Honduran coffee landscape"
           width={2091}
           height={887}
@@ -42,6 +56,7 @@ export function ParallaxHero() {
           sizes="100vw"
           className="w-full h-auto"
         />
+        <HeroRive />
       </div>
 
       {/* Mobile gradient: top-down */}

@@ -17,7 +17,8 @@ No test suite is configured yet.
 - **Next.js 16.1.6 / React 19.2.3** with React Compiler (`reactCompiler: true` in `next.config.ts`)
 - **Tailwind CSS v4** — uses `@import "tailwindcss"` in globals.css, not the v3 config plugin
 - **TypeScript 5** with strict mode; path alias `@/*` → `./src/*`
-- **No animation library** — motion is pure `requestAnimationFrame` / CSS transforms
+- **Rive** — `@rive-app/react-canvas` used for the hero animation overlay (`hero-desktop-macaw.riv`)
+- **No other animation library** — motion is pure `requestAnimationFrame` / CSS transforms
 - **Resend** — email API for subscriber capture and transactional email (`resend` npm package)
 
 ---
@@ -65,7 +66,8 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 ### Client Components
 
 **`ParallaxHero.tsx`** — Static full-width image hero with load-in card animation.
-- Background: `hero-2.png.jpg` (2091×887) rendered at natural aspect ratio via `w-full h-auto` — no cropping.
+- Desktop background: `hero-background-root.jpg` (2091×887) rendered at natural aspect ratio via `w-full h-auto` — no cropping. Original composite was `hero-2.png.jpg`; foreground elements (macaw, tree, coffee bag, mat) were extracted into a Rive file.
+- Rive overlay: `HeroRive` sub-component uses `useRive` from `@rive-app/react-canvas` to render `/hero-desktop-macaw.riv` absolutely over the background image (`Fit.Fill`, `pointer-events-none`). The Rive artboard must have no fill so the background image shows through.
 - Hero card overlaid absolutely, left-aligned with padding, uses `.hero-card-enter` CSS animation (fade + translateY 20px→0, 0.6s, 0.15s delay).
 - `smoothScrollTo(targetTop, durationMs)` utility handles smooth scroll for CTA buttons.
 - Card sizing: `max-w-lg` → `md:max-w-xl` → `lg:max-w-2xl`.
@@ -265,8 +267,13 @@ Exports:
 
 ## Public Assets
 
-### Hero layers (7 PNG)
-`/hero image layer 0 (base).png` through `layer 5A.png`
+### Hero images
+`hero-background-root.jpg` (2091×887) — desktop hero background, foreground elements removed
+`hero-desktop-macaw.riv` — Rive animation file containing the removed foreground elements (macaw, tree, coffee bag, mat); same canvas size as the background image; artboard fill must be transparent
+`hero-2.png.jpg` — original composite hero image (retained for reference)
+
+### Hero layers (7 PNG, legacy)
+`/hero image layer 0 (base).png` through `layer 5A.png` — used by `ParallaxHeroFull.tsx`
 
 ### Farm images (6 JPG)
 `farm1.jpg`–`farm6.jpg` — map to farm IDs 1–6 in `BatchCard`. Farms 4 & 5 use `scale-[1.15]` to compensate for white borders.
