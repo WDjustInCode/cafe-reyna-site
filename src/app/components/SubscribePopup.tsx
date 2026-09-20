@@ -94,7 +94,7 @@ export function SubscribePopup() {
             <p className="text-2xl">☕</p>
             <h2 className="text-3xl">You&apos;re on the list</h2>
             <p className="text-sm leading-relaxed text-[#4a4037]">
-              We&apos;ll reach out as soon as we launch. Expect fresh batches, farm stories, and early access.
+              You&apos;ll hear from us when new lots drop — fresh batches, farm notes, and early access.
             </p>
             <button
               onClick={dismiss}
@@ -105,16 +105,16 @@ export function SubscribePopup() {
           </div>
         ) : (
           <div className="space-y-5">
-            <div className="space-y-2">
+            <div className="space-y-2 text-center">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
-                Coming Soon
+                New Releases
               </p>
               <h2>
-                Be the first{" "}
-                <span className="whitespace-nowrap">to know</span>
+                Never miss{" "}
+                <span className="whitespace-nowrap">a drop</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                Café Reyna is launching soon. Drop your email and we&apos;ll notify you the moment fresh roast batches go live.
+                New lots land in small batches and go fast. Get notified the moment fresh roasts are available — plus farm notes and early access.
               </p>
             </div>
 
@@ -156,7 +156,7 @@ export function SubscribePopup() {
                 disabled={status === 'loading'}
                 className="w-full rounded-full bg-[#6b3e26] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#56311f] disabled:opacity-60"
               >
-                {status === 'loading' ? 'Subscribing…' : 'Notify me at launch'}
+                {status === 'loading' ? 'Subscribing…' : 'Notify me'}
               </button>
             </form>
 

@@ -45,7 +45,7 @@ function confirmationEmail(email: string) {
 
               <!-- Subtext -->
               <p style="margin:0 0 32px;font-size:15px;line-height:1.7;color:#4a4037;text-align:center;">
-                Thanks for signing up. We'll reach out as soon as Café Reyna launches — expect fresh roast batches, farm stories, and a first look at the lots we're working with.
+                Thanks for signing up. We'll be in touch when new lots are available — fresh roast batches, farm notes, and early access to the lots we're working with.
               </p>
 
               <!-- Divider -->

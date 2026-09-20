@@ -52,7 +52,7 @@ export function SubscribeSection() {
   return (
     <section
       id="stay-in-the-loop"
-      aria-label="Subscribe for launch updates"
+      aria-label="Subscribe for roast release updates"
       className="space-y-6 rounded-3xl border border-[#e3d7c5] bg-[#efe5d8] px-6 py-12 text-center"
     >
       {status === 'success' ? (
@@ -60,20 +60,20 @@ export function SubscribeSection() {
           <p className="text-2xl">☕</p>
           <h2>You&apos;re on the list</h2>
           <p className="text-sm leading-relaxed text-[#4a4037]">
-            We&apos;ll be in touch with launch news, fresh batches, and stories from the farm.
+            You&apos;ll hear from us when new lots drop — fresh batches and farm notes.
           </p>
         </div>
       ) : (
         <>
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
-              Stay in the loop
+              New Releases
             </p>
-            <h2>
-              We&apos;re launching soon
+            <h2 className="text-center">
+              New lots, small batches
             </h2>
             <p className="mx-auto max-w-md text-sm leading-relaxed text-[#4a4037]">
-              Get notified when our first roast batches go live — plus farm stories and early access to new lots.
+              Subscribe for drop notifications — new lots roasted to order in small batches, with full farm traceability.
             </p>
           </div>
 
