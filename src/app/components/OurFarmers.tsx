@@ -45,7 +45,7 @@ export async function OurFarmers() {
             >
               {hasImage && (
                 <Image
-                  src={`/farmer${imageNum}.jpg`}
+                  src={`/farmer${imageNum}.webp`}
                   alt={farmer.name}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
