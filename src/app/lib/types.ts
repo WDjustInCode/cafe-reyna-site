@@ -17,7 +17,7 @@ export interface ApiLot {
   farm_id: string;
   lot_code: string;
   process: string;
-  varietal: string;
+  varietal: string[];
   arrival_date: number;
   notes: string[];
   awards?: ApiAward[];
@@ -53,7 +53,7 @@ export interface ApiFarmer {
 export interface LotCardViewModel {
   lotId: string;
   lotCode: string;
-  varietal: string;
+  varietal: string[];
   process: string;
   awards: ApiAward[];
   hasAwards: boolean;
@@ -85,7 +85,7 @@ export interface BatchCardViewModel {
   lotCode: string;
   origin: string;
   process: string;
-  varietal: string;
+  varietal: string[];
   roastLevel: string;
   roastDate: string;
   notes: string[];

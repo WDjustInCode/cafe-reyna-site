@@ -78,7 +78,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
       {/* Farm image */}
       <div className="relative h-44 w-full shrink-0 overflow-hidden">
         <Image
-          src={`/farm${vm.farmId}.jpg`}
+          src={`/farm${vm.farmId}.webp`}
           alt={vm.farmName}
           fill
           className={farmImageClass[vm.farmId] ?? 'object-cover transition-transform duration-500 ease-out group-hover:scale-105'}
@@ -99,7 +99,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
       {/* Two-column metadata + notes */}
       <div className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3">
         <MetaCell icon="/process.svg" label="Process" value={vm.process} />
-        <MetaCell icon="/coffee-plant-grid.svg" label="Varietal" value={vm.varietal} />
+        <MetaCell icon="/coffee-plant-grid.svg" label="Varietal" value={vm.varietal.join(', ')} />
         <MetaCell icon="/roast.svg" label="Roast" value={vm.roastLevel} />
         <MetaCell icon="/calendar.svg" label="Roast Date" value={<span className="normal-case">{roastDateFormatted}</span>} iconSize="w-[26px] h-[26px]" />
         <MetaCell

@@ -52,7 +52,7 @@ export async function fetchFarmerPageData(): Promise<FarmerPageViewModel[]> {
           return {
             lotId: lot.id,
             lotCode: lot.lot_code ?? lot.id,
-            varietal: lot.varietal,
+            varietal: Array.isArray(lot.varietal) ? lot.varietal : [lot.varietal].filter(Boolean),
             process: lot.process,
             awards,
             hasAwards: awards.length > 0,
@@ -73,7 +73,7 @@ export async function fetchFarmerPageData(): Promise<FarmerPageViewModel[]> {
         location: [farmer.region, farmer.country].filter(Boolean).join(', '),
         story: farmer.story ?? null,
         hasPortrait,
-        portraitSrc: hasPortrait ? `/farmer${n}.jpg` : null,
+        portraitSrc: hasPortrait ? `/farmer${n}.webp` : null,
         farms: farmSections,
       };
     })
@@ -89,28 +89,45 @@ export async function fetchFarmerPageData(): Promise<FarmerPageViewModel[]> {
 }
 
 export async function fetchProcessInventory(): Promise<Record<string, number>> {
-  const lots = await fetch(`${BASE}/lot`, { next: { revalidate: 300 } }).then(
-    (r) => r.json() as Promise<ApiLot[]>,
-  );
+  const isr = { next: { revalidate: 300 } } as const;
+  const [lots, batches] = await Promise.all([
+    fetch(`${BASE}/lot`, isr).then((r) => r.json() as Promise<ApiLot[]>),
+    fetch(`${BASE}/roastBatch`, isr).then((r) => r.json() as Promise<ApiRoastBatch[]>),
+  ]);
 
+  const lotById = new Map(lots.map((l) => [l.id, l]));
   const inventory: Record<string, number> = {};
-  for (const lot of lots) {
-    if (!lot.process) continue;
+
+  for (const batch of batches) {
+    if (batch.remaining_roasted_weight_lb <= 0) continue;
+    if (!isVisible(getDaysOld(new Date(batch.roast_date * 1000).toISOString()))) continue;
+    const lot = lotById.get(batch.lot_id);
+    if (!lot?.process) continue;
     const key = lot.process.toLowerCase();
-    inventory[key] = (inventory[key] ?? 0) + (lot.remaining_green_weight_lb ?? 0);
+    inventory[key] = (inventory[key] ?? 0) + batch.remaining_roasted_weight_lb;
   }
   return inventory;
 }
 
 export async function fetchVarietalInventory(): Promise<Record<string, number>> {
-  const lots = await fetch(`${BASE}/lot`, { next: { revalidate: 300 } }).then(
-    (r) => r.json() as Promise<ApiLot[]>,
-  );
+  const isr = { next: { revalidate: 300 } } as const;
+  const [lots, batches] = await Promise.all([
+    fetch(`${BASE}/lot`, isr).then((r) => r.json() as Promise<ApiLot[]>),
+    fetch(`${BASE}/roastBatch`, isr).then((r) => r.json() as Promise<ApiRoastBatch[]>),
+  ]);
 
+  const lotById = new Map(lots.map((l) => [l.id, l]));
   const inventory: Record<string, number> = {};
-  for (const lot of lots) {
-    if (!lot.varietal) continue;
-    inventory[lot.varietal] = (inventory[lot.varietal] ?? 0) + (lot.remaining_green_weight_lb ?? 0);
+
+  for (const batch of batches) {
+    if (batch.remaining_roasted_weight_lb <= 0) continue;
+    if (!isVisible(getDaysOld(new Date(batch.roast_date * 1000).toISOString()))) continue;
+    const lot = lotById.get(batch.lot_id);
+    if (!lot) continue;
+    const varietals = Array.isArray(lot.varietal) ? lot.varietal : [lot.varietal].filter(Boolean);
+    for (const v of varietals) {
+      inventory[v] = (inventory[v] ?? 0) + batch.remaining_roasted_weight_lb;
+    }
   }
   return inventory;
 }
@@ -159,7 +176,7 @@ export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
           lotCode: lot.lot_code ?? lot.id,
           origin: farm.region ?? 'Honduras',
           process: lot.process,
-          varietal: lot.varietal,
+          varietal: Array.isArray(lot.varietal) ? lot.varietal : [lot.varietal].filter(Boolean),
           roastLevel: batch.roast_level,
           roastDate: new Date(batch.roast_date * 1000).toISOString(),
           notes: Array.isArray(lot.notes)

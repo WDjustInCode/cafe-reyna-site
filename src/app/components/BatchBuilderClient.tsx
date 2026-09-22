@@ -73,12 +73,12 @@ export function BatchBuilderClient({
                 </div>
                 <p className="mt-1">{batch.roastLevel}</p>
               </div>
-              {batch.varietal && (
+              {batch.varietal.length > 0 && (
                 <div>
                   <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
                     Varietal
                   </div>
-                  <p className="mt-1">{batch.varietal}</p>
+                  <p className="mt-1">{batch.varietal.join(', ')}</p>
                 </div>
               )}
               {batch.elevation != null && (

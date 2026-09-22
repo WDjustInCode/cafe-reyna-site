@@ -61,7 +61,7 @@ function LotCard({ lot }: { lot: LotCardViewModel }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">Varietal</p>
-          <p className="mt-0.5 text-sm capitalize text-[#2a2a2a]">{lot.varietal}</p>
+          <p className="mt-0.5 text-sm capitalize text-[#2a2a2a]">{lot.varietal.join(', ')}</p>
         </div>
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">Process</p>
@@ -81,7 +81,7 @@ function FarmSection({ farm }: { farm: FarmSectionViewModel }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
         <div className="relative h-32 w-40 shrink-0 overflow-hidden rounded-lg">
           <Image
-            src={`/farm${farm.farmId}.jpg`}
+            src={`/farm${farm.farmId}.webp`}
             alt={farm.farmName}
             fill
             className={`object-cover transition-transform duration-500 ${scaleClass}`}

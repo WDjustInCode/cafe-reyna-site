@@ -18,7 +18,7 @@ function normalizeFilter(s: string) {
 
 const KNOWN_VARIETALS = [
   'Catuai', 'Bourbon', 'Caturra', 'Lempira',
-  'IHCAFE 90', 'Pacas', 'Typica', 'Parainema',
+  'IH-90', 'Pacas', 'Typica', 'Parainema',
 ];
 
 // URL-synced filter keys
@@ -181,7 +181,7 @@ export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) 
       farms: [...new Set(batches.map((b) => b.farmName))].sort(),
       regions: [...new Set(batches.map((b) => b.origin))].sort(),
       lots: [...new Set(batches.map((b) => b.lotCode))].sort(),
-      varietals: [...new Set([...KNOWN_VARIETALS, ...batches.map((b) => b.varietal)])].sort(),
+      varietals: [...new Set([...KNOWN_VARIETALS, ...batches.flatMap((b) => b.varietal)])].sort(),
       processes: [...new Set(batches.map((b) => b.process))].sort(),
       roasts: [...new Set(batches.map((b) => b.roastLevel))].sort(),
       notes: [...new Set(batches.flatMap((b) => b.notes))].sort(),
@@ -194,7 +194,7 @@ export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) 
     if (filters.farm) result = result.filter((b) => b.farmName === filters.farm);
     if (filters.region) result = result.filter((b) => normalizeFilter(b.origin) === normalizeFilter(filters.region));
     if (filters.lot) result = result.filter((b) => b.lotCode === filters.lot);
-    if (filters.varietal) result = result.filter((b) => b.varietal.toLowerCase() === filters.varietal.toLowerCase());
+    if (filters.varietal) result = result.filter((b) => b.varietal.some((v) => v.toLowerCase() === filters.varietal.toLowerCase()));
     if (filters.process) result = result.filter((b) => b.process.toLowerCase() === filters.process.toLowerCase());
     if (filters.roast) result = result.filter((b) => (b.roastLevel ?? '').toLowerCase() === filters.roast.toLowerCase());
     if (filters.notes.length > 0) {

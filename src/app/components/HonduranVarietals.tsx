@@ -36,7 +36,7 @@ const VARIETALS: Varietal[] = [
     oftenExpresses: 'cocoa, nuts, mild fruit',
   },
   {
-    name: 'IHCAFE 90',
+    name: 'IH-90',
     description: 'A varietal developed in Honduras and commonly grown for strong performance and balanced cup structure.',
     commonIn: 'multiple Honduran growing regions',
     oftenExpresses: 'sweetness, light fruit, chocolate, balanced body',
