@@ -134,18 +134,23 @@ export async function fetchVarietalInventory(): Promise<Record<string, number>> 
 
 export async function fetchRegionInventory(): Promise<Record<string, number>> {
   const isr = { next: { revalidate: 300 } } as const;
-  const [farms, lots] = await Promise.all([
+  const [farms, lots, batches] = await Promise.all([
     fetch(`${BASE}/farm`, isr).then((r) => r.json() as Promise<ApiFarm[]>),
     fetch(`${BASE}/lot`, isr).then((r) => r.json() as Promise<ApiLot[]>),
+    fetch(`${BASE}/roastBatch`, isr).then((r) => r.json() as Promise<ApiRoastBatch[]>),
   ]);
 
   const farmById = new Map(farms.map((f) => [f.id, f]));
+  const lotById = new Map(lots.map((l) => [l.id, l]));
   const inventory: Record<string, number> = {};
 
-  for (const lot of lots) {
-    const farm = farmById.get(lot.farm_id);
+  for (const batch of batches) {
+    if (batch.remaining_roasted_weight_lb <= 0) continue;
+    if (!isVisible(getDaysOld(new Date(batch.roast_date * 1000).toISOString()))) continue;
+    const lot = lotById.get(batch.lot_id);
+    const farm = lot ? farmById.get(lot.farm_id) : undefined;
     if (!farm?.region) continue;
-    inventory[farm.region] = (inventory[farm.region] ?? 0) + (lot.remaining_green_weight_lb ?? 0);
+    inventory[farm.region] = (inventory[farm.region] ?? 0) + batch.remaining_roasted_weight_lb;
   }
 
   return inventory;
