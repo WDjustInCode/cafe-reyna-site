@@ -31,16 +31,11 @@ function FreshnessMeter({ daysOld }: { daysOld: number }) {
   );
 }
 
-function MetaCell({ icon, label, value, iconSize = 'w-8 h-8' }: { icon: string; label: string; value: React.ReactNode; iconSize?: string }) {
+function MetaCell({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className={`relative ${iconSize} shrink-0`}>
-        <Image src={icon} alt="" fill className="opacity-80 object-contain" />
-      </div>
-      <div>
-        <p className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7a6a5a]">{label}</p>
-        <p className="mt-0.5 text-base capitalize text-[#2a2a2a]">{value}</p>
-      </div>
+    <div>
+      <p className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7a6a5a]">{label}</p>
+      <p className="mt-0.5 text-base capitalize text-[#2a2a2a]">{value}</p>
     </div>
   );
 }
@@ -89,6 +84,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
       <div className="flex flex-col flex-1 p-7">
       {/* Identity */}
       <header className="mb-4 space-y-0.5">
+        <p className="text-base text-[#7a6a5a]">Farm</p>
         <h3 className="text-xl normal-case leading-tight text-[#2a2a2a]">
           {vm.farmName}
         </h3>
@@ -98,15 +94,13 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
 
       {/* Two-column metadata + notes */}
       <div className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3">
-        <MetaCell icon="/process.svg" label="Process" value={vm.process} />
-        <MetaCell icon="/coffee-plant-grid.svg" label="Varietal" value={vm.varietal.join(', ')} />
-        <MetaCell icon="/roast.svg" label="Roast" value={vm.roastLevel} />
-        <MetaCell icon="/calendar.svg" label="Roast Date" value={<span className="normal-case">{roastDateFormatted}</span>} iconSize="w-[26px] h-[26px]" />
-        <MetaCell
-          icon="/elevation.svg"
-          label="Elevation"
-          value={vm.elevation != null ? `${vm.elevation.toLocaleString()} m` : '—'}
-        />
+        <MetaCell label="Process" value={vm.process} />
+        <MetaCell label="Elevation" value={vm.elevation != null ? `${vm.elevation.toLocaleString()} m` : '—'} />
+        <MetaCell label="Roast" value={vm.roastLevel} />
+        <MetaCell label="Roast Date" value={<span className="normal-case">{roastDateFormatted}</span>} />
+        <div className="col-span-2">
+          <MetaCell label="Varietal" value={vm.varietal.join(', ')} />
+        </div>
       </div>
 
       {/* Tasting notes pills */}
@@ -149,9 +143,10 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
       {/* Price + CTA */}
       <div className="mt-auto space-y-3">
         <p className="text-base font-semibold text-[#2a2a2a]">
-          ${price.toFixed(2)}{' '}
+          ${price.toFixed(2)}
+          <span className="ml-0.5 text-xs font-normal text-[#7a6a5a]">/12oz</span>
           {state !== 'fresh' && (
-            <span className="ml-1 text-xs font-normal text-[#7a6a5a] line-through">
+            <span className="ml-2 text-xs font-normal text-[#7a6a5a] line-through">
               ${vm.basePrice.toFixed(2)}
             </span>
           )}
