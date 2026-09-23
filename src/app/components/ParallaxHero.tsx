@@ -76,7 +76,7 @@ export function ParallaxHero() {
             </h1>
             <p className="sm:text-lg leading-relaxed text-[#f5ebdc]/90 md:hidden lg:block lg:w-[35vw] xl:w-[30vw]">
               Sourced from friend &amp; family farms in Honduras. Roasted in
-              small, transparent batched. Priced by freshness.
+              small, transparent batches. Priced by freshness.
             </p>
             <div className="flex flex-wrap gap-3 pt-1 justify-center md:justify-start">
               <a
