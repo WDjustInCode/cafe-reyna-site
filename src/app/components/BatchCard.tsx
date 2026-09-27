@@ -88,15 +88,15 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
         <h3 className="text-xl normal-case leading-tight text-[#2a2a2a]">
           {vm.farmName}
         </h3>
-        <p className="text-base text-[#2a2a2a]"><span className="text-[#7a6a5a]">Lot/Batch</span> <span className="font-mono">{vm.batchCode}</span></p>
-        <p className="text-base text-[#4a4037]"><span className="text-[#7a6a5a]">Region</span> {vm.origin}</p>
+        <p className="text-base text-[#2a2a2a]"><span className="text-[#7a6a5a]">Process</span> {vm.process.replace(/\b\w/g, (c) => c.toUpperCase())}</p>
+        <p className="text-base text-[#4a4037]"><span className="text-[#7a6a5a]">Roast</span> {vm.roastLevel.replace(/\b\w/g, (c) => c.toUpperCase())}</p>
       </header>
 
       {/* Two-column metadata + notes */}
       <div className="mb-4 grid grid-cols-2 gap-x-4 gap-y-3">
-        <MetaCell label="Process" value={vm.process} />
-        <MetaCell label="Elevation" value={vm.elevation != null ? `${vm.elevation.toLocaleString()} m` : '—'} />
-        <MetaCell label="Roast" value={vm.roastLevel} />
+        <MetaCell label="Region" value={vm.origin} />
+        <MetaCell label="Lot/Batch" value={<span className="font-mono">{vm.batchCode}</span>} />
+        <MetaCell label="Elevation" value={vm.elevation ?? '—'} />
         <MetaCell label="Roast Date" value={<span className="normal-case">{roastDateFormatted}</span>} />
         <div className="col-span-2">
           <MetaCell label="Varietal" value={vm.varietal.join(', ')} />

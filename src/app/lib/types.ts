@@ -3,6 +3,7 @@ export interface ApiFarm {
   name: string;
   region?: string;
   elevation_m: number;
+  elevation_m_max?: number;
   farmer_id: string;
 }
 
@@ -63,7 +64,7 @@ export interface FarmSectionViewModel {
   farmId: string;
   farmName: string;
   region: string | null;
-  elevationM: number | null;
+  elevationM: string | null;
   lots: LotCardViewModel[];
 }
 
@@ -91,6 +92,6 @@ export interface BatchCardViewModel {
   notes: string[];
   basePrice: number;
   remainingWeightLb: number;
-  elevation: number | null;
+  elevation: string | null;
   shopifyVariantId: string | null;
 }

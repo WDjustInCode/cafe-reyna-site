@@ -3,6 +3,13 @@ import { getDaysOld, isVisible } from './freshness';
 
 const BASE = 'https://69b80a0effbcd02860970059.mockapi.io';
 
+function formatElevation(min: number | null | undefined, max?: number | null): string | null {
+  if (min == null) return null;
+  const lo = min.toLocaleString();
+  if (max != null) return `${lo} – ${max.toLocaleString()} m`;
+  return `${lo} m`;
+}
+
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Fetch failed: ${url} — ${res.status}`);
@@ -62,7 +69,7 @@ export async function fetchFarmerPageData(): Promise<FarmerPageViewModel[]> {
           farmId: farm.id,
           farmName: farm.name,
           region: farm.region ?? null,
-          elevationM: farm.elevation_m ?? null,
+          elevationM: formatElevation(farm.elevation_m, farm.elevation_m_max),
           lots: lotCards,
         };
       });
@@ -189,7 +196,7 @@ export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
             : [],
           basePrice: batch.basePrice,
           remainingWeightLb: batch.remaining_roasted_weight_lb,
-          elevation: farm.elevation_m ?? null,
+          elevation: formatElevation(farm.elevation_m, farm.elevation_m_max),
           shopifyVariantId: batch.shopify_variant_id ?? null,
         },
       ];

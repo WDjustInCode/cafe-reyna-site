@@ -93,7 +93,7 @@ function FarmSection({ farm }: { farm: FarmSectionViewModel }) {
           <div className="flex flex-wrap gap-x-5 gap-y-0.5 text-sm text-[#4a4037]">
             {farm.region && <span>{farm.region}</span>}
             {farm.elevationM != null && (
-              <span>{farm.elevationM.toLocaleString()} m elevation</span>
+              <span>{farm.elevationM} elevation</span>
             )}
           </div>
         </div>
