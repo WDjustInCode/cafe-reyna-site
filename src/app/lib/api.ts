@@ -1,5 +1,6 @@
 import type { ApiAward, ApiFarm, ApiFarmer, ApiLot, ApiRoastBatch, BatchCardViewModel, FarmerPageViewModel, FarmSectionViewModel, LotCardViewModel } from './types';
 import { getDaysOld, isVisible } from './freshness';
+import { getShopifyRefForBatch } from './shopifyProducts';
 
 const BASE = 'https://69b80a0effbcd02860970059.mockapi.io';
 
@@ -178,6 +179,8 @@ export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
       const lot = lotById.get(batch.lot_id);
       const farm = lot ? farmById.get(lot.farm_id) : undefined;
       if (!lot || !farm) return [];
+      // Mock API shopify_variant_id values are placeholders; use the explicit map.
+      const shopify = getShopifyRefForBatch(batch.id);
 
       return [
         {
@@ -197,7 +200,8 @@ export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
           basePrice: batch.basePrice,
           remainingWeightLb: batch.remaining_roasted_weight_lb,
           elevation: formatElevation(farm.elevation_m, farm.elevation_m_max),
-          shopifyVariantId: batch.shopify_variant_id ?? null,
+          shopifyVariantId: shopify?.variantId ?? null,
+          shopifyHandle: shopify?.handle ?? null,
         },
       ];
     })

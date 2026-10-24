@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import type React from 'react';
@@ -12,6 +14,7 @@ import {
   type FreshnessState,
   type StockStatus,
 } from '@/app/lib/freshness';
+import { useCart } from './CartContext';
 
 function FreshnessMeter({ daysOld }: { daysOld: number }) {
   const filled = getFilledSegments(daysOld);
@@ -58,10 +61,21 @@ const stockBadgeStyles: Record<StockStatus, string> = {
 };
 
 export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
+  const { addItem, isLoading, variantQuantities } = useCart();
   const daysOld = getDaysOld(vm.roastDate);
   const state = getFreshnessState(daysOld);
   const badgeLabel = getFreshnessBadgeLabel(state);
   const price = getDiscountedPrice(vm.basePrice, daysOld);
+
+  // Same per-batch stock cap as BatchBuilderClient (12oz bag ≈ 0.75 lb).
+  const stockMax = Math.max(1, Math.floor(vm.remainingWeightLb / 0.75));
+  const inCart = vm.shopifyVariantId ? (variantQuantities[vm.shopifyVariantId] ?? 0) : 0;
+  const atStockLimit = inCart >= stockMax;
+
+  const handleAddToCart = async () => {
+    if (!vm.shopifyVariantId || atStockLimit) return;
+    await addItem(vm.shopifyVariantId, 1, vm.batchCode);
+  };
   const stockStatus = getStockStatus(vm.remainingWeightLb);
   const roastDateFormatted = new Date(vm.roastDate).toLocaleDateString('en-US', {
     month: 'long',
@@ -151,9 +165,35 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
             </span>
           )}
         </p>
+        {vm.shopifyVariantId === null ? (
+          <button
+            type="button"
+            disabled
+            className="block w-full cursor-not-allowed rounded-md bg-[#c4b49e] py-2.5 text-center text-base font-medium text-white"
+          >
+            Coming soon
+          </button>
+        ) : atStockLimit ? (
+          <button
+            type="button"
+            disabled
+            className="block w-full cursor-not-allowed rounded-md bg-[#c4b49e] py-2.5 text-center text-base font-medium text-white"
+          >
+            Max quantity in cart
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isLoading}
+            className="block w-full cursor-pointer rounded-md bg-[#6b3e26] py-2.5 text-center text-base font-medium text-white transition-colors hover:bg-[#56311f] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? 'Adding…' : inCart > 0 ? `${inCart} in cart · Add another` : 'Add to cart'}
+          </button>
+        )}
         <Link
           href={`/coffee/${vm.batchId}`}
-          className="block w-full rounded-md bg-[#6b3e26] py-2.5 text-center text-base font-medium text-white transition-colors hover:bg-[#56311f]"
+          className="block w-full text-center text-sm font-medium text-[#6b3e26] underline-offset-2 hover:underline"
         >
           Build Your Bag
         </Link>

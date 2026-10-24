@@ -93,5 +93,8 @@ export interface BatchCardViewModel {
   basePrice: number;
   remainingWeightLb: number;
   elevation: string | null;
+  /** Real Shopify variant GID from BATCH_SHOPIFY_MAP, or null if no product. */
   shopifyVariantId: string | null;
+  /** Shopify product handle, or null if no product. */
+  shopifyHandle: string | null;
 }

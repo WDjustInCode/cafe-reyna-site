@@ -104,7 +104,7 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - `useBatchCount()`: returns `{ filteredCount, setFilteredCount }`.
 
 **`CartContext.tsx`** — Shopify cart state provider.
-- `CartProvider`: wraps root layout; persists `cartId` to localStorage (`cafe-reyna-cart`). On mount, rehydrates from localStorage via `getCart`.
+- `CartProvider`: wraps root layout; `addItem` opens the drawer after a successful add and falls back to creating a new cart if the stored cart can't be added to (expired/completed); persists `cartId` to localStorage (`cafe-reyna-cart`). On mount, rehydrates from localStorage via `getCart`.
 - `CartLine` interface: `{ lineId, variantId, quantity, batchCode, grindType }`.
 - `useCart()`: returns `{ itemCount, isLoading, isCartOpen, cartLines, variantQuantities, openCart, closeCart, addItem, updateItem, removeItem, checkout }`.
 - `CartButton`: pill button with item count badge (capped at "9+"). Opens the cart drawer.
@@ -121,7 +121,7 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - Same form and API call as `SubscribePopup`; stacked layout with name fields in a 2-col grid.
 - Positioned between `WhyReyna` and the Final CTA.
 
-**`CartDrawer.tsx`** — Slide-in cart panel (right side, fixed, z-50). Locks body scroll when open. Shows line items with inline quantity steppers (decrement to 1 removes the line, ✕ icon at qty 1). Footer shows total bag count and Checkout button that redirects to Shopify checkout URL.
+**`CartDrawer.tsx`** — Slide-in cart panel (right side, fixed, z-50). Locks body scroll when open. Shows line items with inline quantity steppers (decrement to 1 removes the line, ✕ icon at qty 1). Line items show batch code + Shopify product title. Footer shows total bag count, Shopify cart subtotal, and Checkout button that redirects to Shopify checkout URL.
 
 **`BatchBuilderClient.tsx`** — Client component for the batch detail two-column layout.
 - Props: `batch`, `daysOld`, `freshnessState`, `badgeLabel`, `discountedPrice`, `isDiscounted`, `roastDateFormatted` (all computed server-side).
@@ -134,7 +134,8 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 
 **`BatchGrid.tsx`** — Async server component. Accepts prefetched batches or fetches them. Handles error/empty states. Delegates rendering to `BatchGridClient`.
 
-**`BatchCard.tsx`** — Single batch card.
+**`BatchCard.tsx`** — Single batch card. Now a **Client Component** (`'use client'`, uses `useCart`); rendered by `BatchGridClient`.
+- CTA: "Add to cart" (adds 1 bag of the mapped Shopify variant and opens `CartDrawer`; shows "N in cart · Add another" / "Max quantity in cart" using the same `stockMax` rule as the builder), or a disabled "Coming soon" when `shopifyVariantId` is null. "Build Your Bag" stays as a secondary text link to `/coffee/[batchId]`.
 - Inline `FreshnessMeter` sub-function (10-segment progress bar).
 - Inline `MetaCell` sub-component for metadata display with icons.
 - Header identity block: farm name (h3) → Batch `{batchCode}` in Geist Mono → Region `{origin}`.
@@ -209,7 +210,7 @@ Both emails fire in parallel via `Promise.all`. Requires `RESEND_API_KEY` and `R
 
 ### `src/app/lib/shopify.ts` — Shopify Storefront API
 
-Uses `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` and `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` env vars. API version: `2025-01`. All cart mutations attach `Grind Preference` and `Batch Code` as line item attributes.
+Uses `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` and `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` env vars, falling back to `cafe-reyna.myshopify.com` and the public Headless-channel Storefront token hardcoded in the file (public tokens are safe in client code; the fallback keeps Vercel previews working without env vars). API version: `2026-10` (Shopify supports each version ~12 months — bump when it nears deprecation). All cart mutations attach `Batch Code` as a line item attribute. Cart query includes `cost.subtotalAmount` and each line's product title (shown in `CartDrawer`).
 
 Exports:
 - `ShopifyCart` interface
@@ -218,6 +219,18 @@ Exports:
 - `updateCartItem(cartId, lineId, quantity)` — `cartLinesUpdate` mutation
 - `removeCartItem(cartId, lineId)` — `cartLinesRemove` mutation
 - `getCart(cartId)` — `cart` query, returns `ShopifyCart | null`
+
+### `src/app/lib/shopifyProducts.ts` — Batch → Shopify mapping
+
+`BATCH_SHOPIFY_MAP` is an explicit map from MockAPI `roastBatch.id` → `{ handle, variantId }` (stand-in for the planned `RoastBatchVariantMap` table). Keyed by batch **id**, not `batch_code` (batches 1 and 2 share `LA_2609_L1_B1`). The mock API's `shopify_variant_id` values (`"1"`, `"2"`, `"3"`) are placeholders and are ignored. Current entries:
+
+| Batch id | Card | Shopify handle | Variant GID |
+|---|---|---|---|
+| 2 | Los Arroyos · Washed · Dark | `montecillos-washed-catuai-dark-12oz` | `gid://shopify/ProductVariant/52479745425717` |
+| 3 | Finca Deborah · Red Honey · Medium | `montecillos-red-honey-catuai-medium-12oz` | `gid://shopify/ProductVariant/52487123927349` |
+| 1 | Los Arroyos · Washed · Medium | — (no product → "Coming soon") | — |
+
+`fetchAllBatchViewModels` sets `shopifyVariantId` / `shopifyHandle` from this map. Batches without an entry render a disabled "Coming soon" button on `BatchCard` and the builder. Displayed prices still come from `freshness.ts` (`basePrice` × discount); Shopify product prices must be kept in sync manually, and freshness discounts are not applied at Shopify checkout.
 
 ### `src/app/lib/api.ts` — Data fetching
 
@@ -334,6 +347,7 @@ Exports:
 - Checkout flow and payment (cart exists; checkout redirects to Shopify via `checkoutUrl`)
 - Customer authentication
 - Bulk orders section (referenced in spec)
-- `RoastBatchVariantMap` table for Shopify variant mapping (currently `shopify_variant_id` stored directly on `ApiRoastBatch`)
+- `RoastBatchVariantMap` table for Shopify variant mapping (currently the hardcoded `BATCH_SHOPIFY_MAP` in `lib/shopifyProducts.ts`)
+- Freshness discounts at checkout (card prices are discounted client-side only; Shopify charges the product's list price)
 - Farmer CMS / content management
-- Pricing display in CartDrawer (Shopify price data not yet fetched into cart lines)
+- Per-line pricing in CartDrawer (drawer shows Shopify's cart subtotal only)

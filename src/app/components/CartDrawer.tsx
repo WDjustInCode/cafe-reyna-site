@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useCart } from './CartContext';
 
 export function CartDrawer() {
-  const { isCartOpen, closeCart, cartLines, itemCount, isLoading, updateItem, removeItem, checkout } = useCart();
+  const { isCartOpen, closeCart, cartLines, itemCount, subtotal, isLoading, updateItem, removeItem, checkout } = useCart();
 
   // Lock body scroll when open
   useEffect(() => {
@@ -18,7 +18,7 @@ export function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  const subtotal = cartLines.reduce((sum, line) => sum + line.quantity, 0);
+  const totalBags = cartLines.reduce((sum, line) => sum + line.quantity, 0);
 
   return (
     <>
@@ -66,6 +66,9 @@ export function CartDrawer() {
                     <p className="font-mono text-sm font-semibold text-[#2a2a2a]">
                       {line.batchCode || '12oz Bag'}
                     </p>
+                    {line.productTitle && (
+                      <p className="text-xs text-[#7a6a5a]">{line.productTitle}</p>
+                    )}
                   </div>
 
                   {/* Quantity stepper */}
@@ -109,8 +112,16 @@ export function CartDrawer() {
           <div className="space-y-3 border-t border-[#e3d7c5] px-6 py-4">
             <div className="flex items-center justify-between text-sm text-[#4a4037]">
               <span>Total bags</span>
-              <span className="font-semibold">{subtotal}</span>
+              <span className="font-semibold">{totalBags}</span>
             </div>
+            {subtotal && (
+              <div className="flex items-center justify-between text-sm text-[#4a4037]">
+                <span>Subtotal</span>
+                <span className="font-semibold">
+                  {subtotal.amount.toLocaleString('en-US', { style: 'currency', currency: subtotal.currencyCode })}
+                </span>
+              </div>
+            )}
             <button
               type="button"
               onClick={checkout}

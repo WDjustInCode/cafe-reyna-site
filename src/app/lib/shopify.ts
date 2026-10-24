@@ -1,14 +1,31 @@
+// Storefront API config. NEXT_PUBLIC_* env vars win; the fallbacks keep
+// preview deploys working when the vars aren't set on Vercel. The Storefront
+// token is a *public* (Headless channel) token, which is safe to ship in
+// front-end code.
+const DEFAULT_STORE_DOMAIN = 'cafe-reyna.myshopify.com';
+const DEFAULT_STOREFRONT_TOKEN = '6fc40354546cbb01bdc86518c612653f';
+const API_VERSION = '2026-10';
+
+const STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || DEFAULT_STORE_DOMAIN;
+const STOREFRONT_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN || DEFAULT_STOREFRONT_TOKEN;
+
+interface Money {
+  amount: string;
+  currencyCode: string;
+}
+
 export interface ShopifyCart {
   id: string;
   checkoutUrl: string;
   totalQuantity: number;
+  cost: { subtotalAmount: Money };
   lines: {
     edges: Array<{
       node: {
         id: string;
         quantity: number;
         attributes: Array<{ key: string; value: string }>;
-        merchandise: { id: string };
+        merchandise: { id: string; product?: { title: string } };
       };
     }>;
   };
@@ -23,6 +40,7 @@ const CART_FIELDS = `
   id
   checkoutUrl
   totalQuantity
+  cost { subtotalAmount { amount currencyCode } }
   lines(first: 100) {
     edges {
       node {
@@ -30,7 +48,7 @@ const CART_FIELDS = `
         quantity
         attributes { key value }
         merchandise {
-          ... on ProductVariant { id }
+          ... on ProductVariant { id product { title } }
         }
       }
     }
@@ -39,15 +57,14 @@ const CART_FIELDS = `
 async function storefrontFetch<T>(
   query: string,
   variables?: Record<string, unknown>,
+  init?: RequestInit,
 ): Promise<T> {
-  const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-  const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN;
-
-  const res = await fetch(`https://${domain}/api/2025-01/graphql.json`, {
+  const res = await fetch(`https://${STORE_DOMAIN}/api/${API_VERSION}/graphql.json`, {
+    ...init,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': token ?? '',
+      'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
     },
     body: JSON.stringify({ query, variables }),
   });
