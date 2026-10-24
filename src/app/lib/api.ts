@@ -14,7 +14,7 @@ import type {
   FarmSectionViewModel,
   LotCardViewModel,
 } from './types';
-import { getDaysOld, isVisible } from './freshness';
+import { isVisible } from './freshness';
 import { storefrontFetch } from './shopify';
 
 const BAG_WEIGHT_LB = 0.75;
@@ -100,12 +100,14 @@ function formatElevation(min: number | null | undefined, max?: number | null): s
   return `${lo} m`;
 }
 
-/** Shopify date fields are YYYY-MM-DD; read them as local midnight. */
+/**
+ * Shopify date fields are YYYY-MM-DD. Pin to noon UTC so the calendar date is
+ * the same on the server (UTC) and in US browsers; freshness.ts reads the
+ * date part only.
+ */
 function dateToIso(value: string | null): string | null {
-  if (!value) return null;
-  const [y, m, d] = value.split('-').map(Number);
-  if (!y || !m || !d) return null;
-  return new Date(y, m - 1, d).toISOString();
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  return `${value}T12:00:00.000Z`;
 }
 
 /** Same-site photo URLs become relative paths so next/image serves them locally. */
@@ -241,7 +243,7 @@ export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
         },
       ];
     })
-    .filter((vm) => isVisible(getDaysOld(vm.roastDate)) && (vm.remainingWeightLb ?? 1) > 0)
+    .filter((vm) => isVisible(vm.roastDate) && (vm.remainingWeightLb ?? 1) > 0)
     .sort((a, b) => new Date(b.roastDate).getTime() - new Date(a.roastDate).getTime());
 }
 

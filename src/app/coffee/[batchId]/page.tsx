@@ -23,9 +23,9 @@ export default async function BatchPage({ params }: { params: Promise<BatchPageP
   if (!batch) notFound();
 
   const daysOld = getDaysOld(batch.roastDate);
-  const freshnessState = getFreshnessState(daysOld);
+  const freshnessState = getFreshnessState(batch.roastDate);
   const badgeLabel = getFreshnessBadgeLabel(freshnessState);
-  const discountedPrice = getDiscountedPrice(batch.basePrice, daysOld);
+  const discountedPrice = getDiscountedPrice(batch.basePrice, batch.roastDate);
   const isDiscounted = freshnessState !== 'fresh';
 
   const roastDateFormatted = new Date(batch.roastDate).toLocaleDateString('en-US', {

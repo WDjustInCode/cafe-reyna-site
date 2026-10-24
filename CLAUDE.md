@@ -181,7 +181,7 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 ### `src/app/lib/freshness.ts` — Pure freshness utilities
 
 - `getDaysOld(roastDateIso)` — days between roast date and today (midnight-adjusted)
-- `isVisible(daysOld)` — true if daysOld < 90
+- `isVisible(daysOld)` — true if the batch is under 3 calendar months old (US Eastern)
 - `getFilledSegments(daysOld)` — 0–10 segments for the freshness meter
 - `getFreshnessState(daysOld)` → `'fresh' | 'value' | 'clearance'`
 - `getFreshnessBadgeLabel(state)` → `"Fresh Roast"` / `"Great Value · 15% Off"` / `"Roast Clearance · 30% Off"`
@@ -192,12 +192,12 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 
 | Days since roast | Badge label | Price |
 |---|---|---|
-| 0–30 | Fresh Roast | 100% |
-| 30–60 | Great Value · 15% Off | 85% |
-| 60–90 | Roast Clearance · 30% Off | 70% |
-| 90+ | Hidden / removed | — |
+| < 1 month | Fresh Roast | 100% |
+| 1–2 months | Great Value · 15% Off | 85% |
+| 2–3 months | Roast Clearance · 30% Off | 70% |
+| 3 months + | Hidden / removed | — |
 
-> Schedule set by Justin 2026-10-24. Shopify checkout applies the same discounts via scheduled automatic discounts (set up by CR Ops), so card and checkout prices match.
+> Schedule set by Justin 2026-10-24. Steps are **calendar months** from the roast date, starting at midnight US Eastern (roasted 10/14 → 15% from 11/14, 30% from 12/14, removed 1/14). Freshness functions take the roast date string, not a day count. Shopify checkout applies the same discounts via scheduled automatic discounts (set up by CR Ops), so card and checkout prices match.
 
 ### `src/app/api/subscribe/route.ts` — Email capture endpoint
 
@@ -249,9 +249,9 @@ Exports: `fetchAllBatchViewModels`, `fetchBatchById`, `fetchFarmers` (`FarmerCar
 | Secondary text | `#4a4037` | Subheadings, labels |
 | Label text | `#7a6a5a` | Muted metadata |
 | Border | `#e3d7c5` | Card / section borders |
-| Fresh badge | bg `#e8f5e9` / text `#2e7d32` | 0–30d |
-| Value badge | bg `#fff8e1` / text `#f57c00` | 30–60d |
-| Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 60–90d |
+| Fresh badge | bg `#e8f5e9` / text `#2e7d32` | < 1 mo |
+| Value badge | bg `#fff8e1` / text `#f57c00` | 1–2 mo |
+| Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 2–3 mo |
 
 ---
 

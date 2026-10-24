@@ -15,8 +15,8 @@ import {
 } from '@/app/lib/freshness';
 import { useCart } from './CartContext';
 
-function FreshnessMeter({ daysOld }: { daysOld: number }) {
-  const filled = getFilledSegments(daysOld);
+function FreshnessMeter({ roastDate, daysOld }: { roastDate: string; daysOld: number }) {
+  const filled = getFilledSegments(roastDate);
   return (
     <div className="flex items-center gap-2">
       <div className="flex gap-[2px]">
@@ -62,9 +62,9 @@ const stockBadgeStyles: Record<StockStatus, string> = {
 export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
   const { addItem, isLoading, variantQuantities } = useCart();
   const daysOld = getDaysOld(vm.roastDate);
-  const state = getFreshnessState(daysOld);
+  const state = getFreshnessState(vm.roastDate);
   const badgeLabel = getFreshnessBadgeLabel(state);
-  const price = getDiscountedPrice(vm.basePrice, daysOld);
+  const price = getDiscountedPrice(vm.basePrice, vm.roastDate);
 
   // Same per-batch stock cap as BatchBuilderClient (12oz bag ≈ 0.75 lb).
   // Unknown stock (no inventory access) falls back to Shopify's own limits.
@@ -141,7 +141,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
           <p className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.05em] text-[#7a6a5a]">
             Freshness
           </p>
-          <FreshnessMeter daysOld={daysOld} />
+          <FreshnessMeter roastDate={vm.roastDate} daysOld={daysOld} />
         </div>
         <div className="flex flex-wrap gap-2">
           <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[state]}`}>
