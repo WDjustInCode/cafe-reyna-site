@@ -54,7 +54,7 @@ const CART_FIELDS = `
     }
   }`;
 
-async function storefrontFetch<T>(
+export async function storefrontFetch<T>(
   query: string,
   variables?: Record<string, unknown>,
   init?: RequestInit,
