@@ -67,7 +67,9 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
   const price = getDiscountedPrice(vm.basePrice, daysOld);
 
   // Same per-batch stock cap as BatchBuilderClient (12oz bag ≈ 0.75 lb).
-  const stockMax = Math.max(1, Math.floor(vm.remainingWeightLb / 0.75));
+  // Unknown stock (no inventory access) falls back to Shopify's own limits.
+  const stockMax =
+    vm.remainingWeightLb == null ? 10 : Math.max(1, Math.floor(vm.remainingWeightLb / 0.75));
   const inCart = vm.shopifyVariantId ? (variantQuantities[vm.shopifyVariantId] ?? 0) : 0;
   const atStockLimit = inCart >= stockMax;
 
@@ -75,7 +77,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
     if (!vm.shopifyVariantId || atStockLimit) return;
     await addItem(vm.shopifyVariantId, 1, vm.batchCode);
   };
-  const stockStatus = getStockStatus(vm.remainingWeightLb);
+  const stockStatus = vm.remainingWeightLb == null ? 'available' : getStockStatus(vm.remainingWeightLb);
   const roastDateFormatted = new Date(vm.roastDate).toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',

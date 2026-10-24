@@ -91,10 +91,21 @@ export interface BatchCardViewModel {
   roastDate: string;
   notes: string[];
   basePrice: number;
-  remainingWeightLb: number;
+  /** Roasted lb on hand (Shopify bag count × 0.75). Null if Shopify inventory isn't readable. */
+  remainingWeightLb: number | null;
   elevation: string | null;
-  /** Real Shopify variant GID from BATCH_SHOPIFY_MAP, or null if no product. */
+  /** Shopify variant GID of the product this batch is sold as. */
   shopifyVariantId: string | null;
   /** Shopify product handle, or null if no product. */
   shopifyHandle: string | null;
+}
+
+export interface FarmerCardViewModel {
+  /** Shopify metaobject handle, used in /farmers/[farmerId]. */
+  id: string;
+  name: string;
+  region: string | null;
+  country: string | null;
+  story: string | null;
+  photoSrc: string | null;
 }

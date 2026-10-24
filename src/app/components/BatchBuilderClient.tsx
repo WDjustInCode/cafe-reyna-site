@@ -30,7 +30,8 @@ export function BatchBuilderClient({
   isDiscounted,
   roastDateFormatted,
 }: BatchBuilderClientProps) {
-  const stockMax = Math.max(1, Math.floor(batch.remainingWeightLb / 0.75));
+  const stockMax =
+    batch.remainingWeightLb == null ? 10 : Math.max(1, Math.floor(batch.remainingWeightLb / 0.75));
   const [quantity, setQuantity] = useState(1);
   const { addItem, isLoading, variantQuantities } = useCart();
 

@@ -220,45 +220,22 @@ Exports:
 - `removeCartItem(cartId, lineId)` — `cartLinesRemove` mutation
 - `getCart(cartId)` — `cart` query, returns `ShopifyCart | null`
 
-### `src/app/lib/shopifyProducts.ts` — Batch → Shopify mapping
+### `src/app/lib/api.ts` — Data fetching (Shopify)
 
-`BATCH_SHOPIFY_MAP` is an explicit map from MockAPI `roastBatch.id` → `{ handle, variantId }` (stand-in for the planned `RoastBatchVariantMap` table). Keyed by batch **id**, not `batch_code` (batches 1 and 2 share `LA_2609_L1_B1`). The mock API's `shopify_variant_id` values (`"1"`, `"2"`, `"3"`) are placeholders and are ignored. Current entries:
+All coffee data lives in Shopify metaobjects and is read with the public Storefront token (`storefrontFetch` from `shopify.ts`, ISR 300s). MockAPI.io is retired but left intact.
 
-| Batch id | Card | Shopify handle | Variant GID |
-|---|---|---|---|
-| 2 | Los Arroyos · Washed · Dark | `montecillos-washed-catuai-dark-12oz` | `gid://shopify/ProductVariant/52479745425717` |
-| 3 | Finca Deborah · Red Honey · Medium | `montecillos-red-honey-catuai-medium-12oz` | `gid://shopify/ProductVariant/52487123927349` |
-| 1 | Los Arroyos · Washed · Medium | — (no product → "Coming soon") | — |
+```
+product ─ bag.current_batch ─▶ roast_batch ─ lot ─▶ coffee_lot ─ farm ─▶ coffee_farm ─ farmers ─▶ coffee_farmer
+                                                     └─ awards ─▶ coffee_award
+```
 
-`fetchAllBatchViewModels` sets `shopifyVariantId` / `shopifyHandle` from this map. Batches without an entry render a disabled "Coming soon" button on `BatchCard` and the builder. Displayed prices still come from `freshness.ts` (`basePrice` × discount); Shopify product prices must be kept in sync manually, and freshness discounts are not applied at Shopify checkout.
+- Price = the product's first variant price. Displayed price still applies the `freshness.ts` discount (not applied at checkout).
+- Stock = variant `quantityAvailable` × 0.75 lb. Needs the `unauthenticated_read_product_inventory` scope on the Headless token; without it `remainingWeightLb` is `null`, stock badges are hidden and the per-batch cap falls back to 10 bags.
+- IDs in URLs are metaobject handles: `/coffee/la-2610-l1-b1`, `/farmers/cecilia-quan`.
+- Farm photos are still `/public/farm{1,2}.webp`; `FARM_IMAGE_ID` maps farm handles to those numbers (`farmId`).
+- Shopify date fields are `YYYY-MM-DD`, read as local midnight.
 
-### `src/app/lib/api.ts` — Data fetching
-
-**MockAPI.io base URL:** `https://69b80a0effbcd02860970059.mockapi.io`
-- Endpoints: `/farm`, `/lot`, `/roastBatch`, `/farmers`
-- `roast_date` is a **Unix timestamp in seconds** — multiply by 1000 before `new Date()`
-- `basePrice` is camelCase on `ApiRoastBatch`
-
-Exports:
-- `fetchJson<T>(url)` — generic fetch with error handling
-- `fetchFarmers()` — ISR 300s
-- `fetchFarmerPageData()` — builds `FarmerPageViewModel[]`, ISR 300s
-- `fetchProcessInventory()` — `Record<string, number>` (lbs by process), ISR 300s
-- `fetchVarietalInventory()` — `Record<string, number>` (lbs by varietal), ISR 300s
-- `fetchRegionInventory()` — `Record<string, number>` (lbs by region, joins farm+lot), ISR 300s
-- `fetchAllBatchViewModels()` — joins farm+lot+batch, filters 56+ day old & zero inventory, sorts `roast_date DESC`, **no ISR** (cache: 'no-store')
-- `fetchBatchById(batchId)` — returns `BatchCardViewModel | null`
-
----
-
-## Styling
-
-- **Tailwind v4** — `@import "tailwindcss"` at top of `globals.css`; do NOT use v3 plugin syntax
-- **Headings (h1–h6)** — Copperplate, uppercase, 500 weight, `#6a4322` brown, line-height 1.05
-- **Body** — Geist Sans (next/font/google); Geist Mono for batch codes
-- **Adobe Typekit** — Copperplate loaded via `zgl0jvg.css` in `layout.tsx`
-- **Custom animations** — `animate-bean-pulse` (keyframes in globals.css): opacity + scale, 2s infinite; used on hero scroll-down arrow. `hero-card-enter` (keyframes in globals.css): fade + translateY(20px→0), 0.6s ease-out with 0.15s delay; applied via `.hero-card-enter` class
-- **Hex colors in className** — extensive use of `bg-[#f4ede4]`, `text-[#6b3e26]`, etc.
+Exports: `fetchAllBatchViewModels`, `fetchBatchById`, `fetchFarmers` (`FarmerCardViewModel[]`), `fetchFarmerPageData`, `fetchProcessInventory`, `fetchVarietalInventory`, `fetchRegionInventory`.
 
 ### Color palette
 
@@ -347,7 +324,6 @@ Exports:
 - Checkout flow and payment (cart exists; checkout redirects to Shopify via `checkoutUrl`)
 - Customer authentication
 - Bulk orders section (referenced in spec)
-- `RoastBatchVariantMap` table for Shopify variant mapping (currently the hardcoded `BATCH_SHOPIFY_MAP` in `lib/shopifyProducts.ts`)
 - Freshness discounts at checkout (card prices are discounted client-side only; Shopify charges the product's list price)
 - Farmer CMS / content management
 - Per-line pricing in CartDrawer (drawer shows Shopify's cart subtotal only)
