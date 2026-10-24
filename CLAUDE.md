@@ -181,10 +181,10 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 ### `src/app/lib/freshness.ts` — Pure freshness utilities
 
 - `getDaysOld(roastDateIso)` — days between roast date and today (midnight-adjusted)
-- `isVisible(daysOld)` — true if daysOld < 56
+- `isVisible(daysOld)` — true if daysOld < 90
 - `getFilledSegments(daysOld)` — 0–10 segments for the freshness meter
 - `getFreshnessState(daysOld)` → `'fresh' | 'value' | 'clearance'`
-- `getFreshnessBadgeLabel(state)` → `"Fresh Roast"` / `"Great Value · 10% Off"` / `"Roast Clearance · 40% Off"`
+- `getFreshnessBadgeLabel(state)` → `"Fresh Roast"` / `"Great Value · 15% Off"` / `"Roast Clearance · 30% Off"`
 - `getStockStatus(remainingLb)` → `'low' | 'selling-fast' | 'available'`
 - `getDiscountedPrice(basePrice, daysOld)` → full / 90% / 70% of base
 
@@ -193,11 +193,11 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 | Days since roast | Badge label | Price |
 |---|---|---|
 | 0–14 | Fresh Roast | 100% |
-| 14–28 | Great Value · 10% Off | 90% |
-| 28–56 | Roast Clearance · 40% Off | 70% |
-| 56+ | Hidden / removed | — |
+| 30–60 | Great Value · 15% Off | 85% |
+| 60–90 | Roast Clearance · 30% Off | 70% |
+| 90+ | Hidden / removed | — |
 
-> Note: The spec files say "20% off" and "50% off" but the **actual code** uses 10% and 30% discounts (90% and 70% of base price).
+> Schedule set by Justin 2026-10-24. Shopify checkout applies the same discounts via scheduled automatic discounts (set up by CR Ops), so card and checkout prices match.
 
 ### `src/app/api/subscribe/route.ts` — Email capture endpoint
 
@@ -251,7 +251,7 @@ Exports: `fetchAllBatchViewModels`, `fetchBatchById`, `fetchFarmers` (`FarmerCar
 | Border | `#e3d7c5` | Card / section borders |
 | Fresh badge | bg `#e8f5e9` / text `#2e7d32` | 0–14d |
 | Value badge | bg `#fff8e1` / text `#f57c00` | 14–28d |
-| Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 28–56d |
+| Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 60–90d |
 
 ---
 
