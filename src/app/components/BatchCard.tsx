@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import type React from 'react';
 import type { BatchCardViewModel } from '@/app/lib/types';
 import {
@@ -191,12 +190,6 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
             {isLoading ? 'Adding…' : inCart > 0 ? `${inCart} in cart · Add another` : 'Add to cart'}
           </button>
         )}
-        <Link
-          href={`/coffee/${vm.batchId}`}
-          className="block w-full text-center text-sm font-medium text-[#6b3e26] underline-offset-2 hover:underline"
-        >
-          Build Your Bag
-        </Link>
       </div>
       </div>
     </article>

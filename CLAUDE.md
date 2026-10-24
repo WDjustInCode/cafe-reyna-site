@@ -135,7 +135,7 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 **`BatchGrid.tsx`** — Async server component. Accepts prefetched batches or fetches them. Handles error/empty states. Delegates rendering to `BatchGridClient`.
 
 **`BatchCard.tsx`** — Single batch card. Now a **Client Component** (`'use client'`, uses `useCart`); rendered by `BatchGridClient`.
-- CTA: "Add to cart" (adds 1 bag of the mapped Shopify variant and opens `CartDrawer`; shows "N in cart · Add another" / "Max quantity in cart" using the same `stockMax` rule as the builder), or a disabled "Coming soon" when `shopifyVariantId` is null. "Build Your Bag" stays as a secondary text link to `/coffee/[batchId]`.
+- CTA: "Add to cart" (adds 1 bag of the mapped Shopify variant and opens `CartDrawer`; shows "N in cart · Add another" / "Max quantity in cart" using the same `stockMax` rule as the builder), or a disabled "Coming soon" when `shopifyVariantId` is null. The card no longer links to `/coffee/[batchId]` (the builder page still exists but nothing on the site links to it).
 - Inline `FreshnessMeter` sub-function (10-segment progress bar).
 - Inline `MetaCell` sub-component for metadata display with icons.
 - Header identity block: farm name (h3) → Batch `{batchCode}` in Geist Mono → Region `{origin}`.
