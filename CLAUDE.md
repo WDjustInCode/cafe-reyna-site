@@ -192,7 +192,7 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 
 | Days since roast | Badge label | Price |
 |---|---|---|
-| 0–14 | Fresh Roast | 100% |
+| 0–30 | Fresh Roast | 100% |
 | 30–60 | Great Value · 15% Off | 85% |
 | 60–90 | Roast Clearance · 30% Off | 70% |
 | 90+ | Hidden / removed | — |
@@ -249,8 +249,8 @@ Exports: `fetchAllBatchViewModels`, `fetchBatchById`, `fetchFarmers` (`FarmerCar
 | Secondary text | `#4a4037` | Subheadings, labels |
 | Label text | `#7a6a5a` | Muted metadata |
 | Border | `#e3d7c5` | Card / section borders |
-| Fresh badge | bg `#e8f5e9` / text `#2e7d32` | 0–14d |
-| Value badge | bg `#fff8e1` / text `#f57c00` | 14–28d |
+| Fresh badge | bg `#e8f5e9` / text `#2e7d32` | 0–30d |
+| Value badge | bg `#fff8e1` / text `#f57c00` | 30–60d |
 | Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 60–90d |
 
 ---
