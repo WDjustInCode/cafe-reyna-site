@@ -11,6 +11,7 @@ import { OurFarmers } from './components/OurFarmers';
 import { WhyReyna } from './components/WhyReyna';
 import { SubscribeSection } from './components/SubscribeSection';
 import { fetchAllBatchViewModels, fetchRegionInventory, fetchVarietalInventory, fetchProcessInventory } from './lib/api';
+import { processMatches } from './lib/process';
 import { BatchCountProvider } from './components/BatchCountContext';
 import { CartButton } from './components/CartContext';
 import { HamburgerMenu } from './components/HamburgerMenu';
@@ -211,8 +212,9 @@ export default async function Home() {
           <Suspense fallback={null}>
             {(() => {
               function processLbs(key: string) {
-                const entry = Object.entries(processInventory).find(([k]) => k.startsWith(key));
-                return entry ? entry[1] : 0;
+                return Object.entries(processInventory)
+                  .filter(([k]) => processMatches(k, key))
+                  .reduce((sum, [, lb]) => sum + lb, 0);
               }
               return (
                 <div className="grid gap-6 md:grid-cols-3">

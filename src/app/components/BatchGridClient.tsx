@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import type { BatchCardViewModel } from '@/app/lib/types';
 import { BatchCard } from './BatchCard';
 import { useBatchCount } from './BatchCountContext';
+import { processMatches } from '@/app/lib/process';
 
 type DateSort = 'desc' | 'asc';
 
@@ -195,7 +196,7 @@ export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) 
     if (filters.region) result = result.filter((b) => normalizeFilter(b.origin) === normalizeFilter(filters.region));
     if (filters.lot) result = result.filter((b) => b.lotCode === filters.lot);
     if (filters.varietal) result = result.filter((b) => b.varietal.some((v) => v.toLowerCase() === filters.varietal.toLowerCase()));
-    if (filters.process) result = result.filter((b) => b.process.toLowerCase() === filters.process.toLowerCase());
+    if (filters.process) result = result.filter((b) => processMatches(b.process, filters.process));
     if (filters.roast) result = result.filter((b) => (b.roastLevel ?? '').toLowerCase() === filters.roast.toLowerCase());
     if (filters.notes.length > 0) {
       result = result.filter((b) => filters.notes.some((n) => b.notes.includes(n)));
