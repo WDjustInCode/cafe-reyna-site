@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'cafe-reyna-subscribed';
+const STORAGE_KEY = 'cafe-reyna-subscribed-v2';
 const NAME_PATTERN = /^[A-Za-zÀ-ÿ'\- ]{1,50}$/;
 
 const inputClass =
@@ -92,9 +92,9 @@ export function SubscribePopup() {
         {status === 'success' ? (
           <div className="space-y-3 text-center">
             <p className="text-2xl">☕</p>
-            <h2 className="text-3xl">You&apos;re on the list</h2>
+            <h2 className="text-3xl">You&apos;re on the list!</h2>
             <p className="text-sm leading-relaxed text-[#4a4037]">
-              You&apos;ll hear from us when new lots drop — fresh batches, farm notes, and early access.
+              We&apos;ll email you the day orders open, along with your founding-list code.
             </p>
             <button
               onClick={dismiss}
@@ -107,14 +107,14 @@ export function SubscribePopup() {
           <div className="space-y-5">
             <div className="space-y-2 text-center">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
-                New Releases
+                Coming Soon
               </p>
               <h2>
-                Never miss{" "}
-                <span className="whitespace-nowrap">a drop</span>
+                The beans{" "}
+                <span className="whitespace-nowrap">are in!</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                New lots land in small batches and go fast. Get notified the moment fresh roasts are available — plus farm notes and early access.
+                We&apos;re just waiting on our state permit, and orders open as soon as it comes through. Join our founding list for 15% off your first order once we launch.
               </p>
             </div>
 
@@ -161,7 +161,7 @@ export function SubscribePopup() {
             </form>
 
             <p className="text-center text-xs text-[#7a6a5a]">
-              No spam. Unsubscribe anytime.
+              One per customer. No spam. Unsubscribe anytime.
             </p>
           </div>
         )}
