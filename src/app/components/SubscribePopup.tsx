@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'cafe-reyna-subscribed';
+const STORAGE_KEY = 'cafe-reyna-subscribed-v2';
 const NAME_PATTERN = /^[A-Za-zÀ-ÿ'\- ]{1,50}$/;
 
 const inputClass =
@@ -94,7 +94,7 @@ export function SubscribePopup() {
             <p className="text-2xl">☕</p>
             <h2 className="text-3xl">You&apos;re on the list</h2>
             <p className="text-sm leading-relaxed text-[#4a4037]">
-              You&apos;ll hear from us when new lots drop — fresh batches, farm notes, and early access.
+              We&apos;ll email you as soon as we&apos;re approved and open for orders.
             </p>
             <button
               onClick={dismiss}
@@ -107,14 +107,14 @@ export function SubscribePopup() {
           <div className="space-y-5">
             <div className="space-y-2 text-center">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#7a6a5a]">
-                New Releases
+                Coming Soon
               </p>
               <h2>
-                Never miss{" "}
-                <span className="whitespace-nowrap">a drop</span>
+                Almost ready{" "}
+                <span className="whitespace-nowrap">to pour</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                New lots land in small batches and go fast. Get notified the moment fresh roasts are available — plus farm notes and early access.
+                We&apos;re finishing up our state permit. Our application has been resubmitted, and we can&apos;t take orders until it&apos;s approved. Leave your email and we&apos;ll let you know the day sales open.
               </p>
             </div>
 
