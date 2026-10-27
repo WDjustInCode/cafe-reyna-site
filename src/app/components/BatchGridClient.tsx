@@ -5,6 +5,8 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import type { BatchCardViewModel } from '@/app/lib/types';
 import { BatchCard } from './BatchCard';
 import { useBatchCount } from './BatchCountContext';
+import { processMatches } from '@/app/lib/process';
+import { FilterDropdown } from './FilterDropdown';
 
 type DateSort = 'desc' | 'asc';
 
@@ -42,50 +44,13 @@ const defaultLocalFilters: LocalFilters = {
 const FILTER_STORAGE_KEY = 'cafe-reyna-batch-filters';
 const URL_FILTER_KEYS: UrlFilterKey[] = ['process', 'region', 'roast', 'varietal'];
 
-function SelectFilter({
-  placeholder,
-  value,
-  options,
-  onChange,
-}: {
-  placeholder: string;
-  value: string;
-  options: string[];
-  onChange: (v: string) => void;
-}) {
-  const sizerRef = useRef<HTMLSpanElement>(null);
-  const [width, setWidth] = useState<number | undefined>();
-
-  useEffect(() => {
-    if (sizerRef.current) setWidth(sizerRef.current.offsetWidth + 24);
-  }, [value, placeholder]);
-
-  return (
-    <div className="relative inline-block">
-      {/* Hidden sizer span — measures rendered text width */}
-      <span
-        ref={sizerRef}
-        aria-hidden
-        className="invisible absolute whitespace-nowrap px-2.5 py-1.5 text-sm"
-      >
-        {value || placeholder}
-      </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        style={width ? { width } : undefined}
-        className="rounded-md border border-[#e3d7c5] bg-transparent px-2.5 py-1.5 text-sm text-[#2a2a2a] focus:border-[#6b3e26] focus:outline-none cursor-pointer"
-      >
-        <option value="">{placeholder}</option>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
+// Fixed process options — same keys as the home page ProcessCards (?process=wash|honey|natural),
+// matched against lot processes like "washed" / "red honey" via processMatches().
+const PROCESS_OPTIONS = [
+  { value: 'wash', label: 'Wash' },
+  { value: 'honey', label: 'Honey' },
+  { value: 'natural', label: 'Natural' },
+];
 
 export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) {
   const { setFilteredCount } = useBatchCount();
@@ -182,7 +147,6 @@ export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) 
       regions: [...new Set(batches.map((b) => b.origin))].sort(),
       lots: [...new Set(batches.map((b) => b.lotCode))].sort(),
       varietals: [...new Set([...KNOWN_VARIETALS, ...batches.flatMap((b) => b.varietal)])].sort(),
-      processes: [...new Set(batches.map((b) => b.process))].sort(),
       roasts: [...new Set(batches.map((b) => b.roastLevel))].sort(),
       notes: [...new Set(batches.flatMap((b) => b.notes))].sort(),
     }),
@@ -195,7 +159,7 @@ export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) 
     if (filters.region) result = result.filter((b) => normalizeFilter(b.origin) === normalizeFilter(filters.region));
     if (filters.lot) result = result.filter((b) => b.lotCode === filters.lot);
     if (filters.varietal) result = result.filter((b) => b.varietal.some((v) => v.toLowerCase() === filters.varietal.toLowerCase()));
-    if (filters.process) result = result.filter((b) => b.process.toLowerCase() === filters.process.toLowerCase());
+    if (filters.process) result = result.filter((b) => processMatches(b.process, filters.process));
     if (filters.roast) result = result.filter((b) => (b.roastLevel ?? '').toLowerCase() === filters.roast.toLowerCase());
     if (filters.notes.length > 0) {
       result = result.filter((b) => filters.notes.some((n) => b.notes.includes(n)));
@@ -223,40 +187,40 @@ export function BatchGridClient({ batches }: { batches: BatchCardViewModel[] }) 
   return (
     <div className="space-y-6">
       {/* Filter bar */}
-      <div className="rounded-xl border border-[#e3d7c5] bg-[#f8f2e8] px-4 py-3">
+      <div className="relative z-20 rounded-xl border border-[#e3d7c5] bg-[#f8f2e8] px-4 py-3">
         {/* Controls row */}
         <div className="flex flex-wrap items-center gap-2">
-          <SelectFilter
+          <FilterDropdown
             placeholder="All Farms"
             value={filters.farm}
             options={options.farms}
             onChange={(v) => setLocalFilter('farm', v)}
           />
-          <SelectFilter
+          <FilterDropdown
             placeholder="All Regions"
             value={filters.region}
             options={options.regions}
             onChange={(v) => setUrlFilter('region', v)}
           />
-          <SelectFilter
+          <FilterDropdown
             placeholder="All Lots"
             value={filters.lot}
             options={options.lots}
             onChange={(v) => setLocalFilter('lot', v)}
           />
-          <SelectFilter
+          <FilterDropdown
             placeholder="All Varietals"
             value={filters.varietal}
             options={options.varietals}
             onChange={(v) => setUrlFilter('varietal', v)}
           />
-          <SelectFilter
+          <FilterDropdown
             placeholder="All Processes"
             value={filters.process}
-            options={options.processes}
+            options={PROCESS_OPTIONS}
             onChange={(v) => setUrlFilter('process', v)}
           />
-          <SelectFilter
+          <FilterDropdown
             placeholder="All Roasts"
             value={filters.roast}
             options={options.roasts}

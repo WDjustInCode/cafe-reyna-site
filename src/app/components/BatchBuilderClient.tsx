@@ -4,13 +4,16 @@ import { useState } from 'react';
 import type { BatchCardViewModel } from '@/app/lib/types';
 import type { FreshnessState } from '@/app/lib/freshness';
 import { useCart } from './CartContext';
+import { FoundingListCTA } from './FoundingListCTA';
+import { SALES_OPEN } from '@/app/lib/sales';
 
 interface BatchBuilderClientProps {
   batch: BatchCardViewModel;
   daysOld: number;
   freshnessState: FreshnessState;
   badgeLabel: string;
-  discountedPrice: number;
+  /** Null pre-launch (no price while the products are Draft). */
+  discountedPrice: number | null;
   isDiscounted: boolean;
   roastDateFormatted: string;
 }
@@ -30,7 +33,8 @@ export function BatchBuilderClient({
   isDiscounted,
   roastDateFormatted,
 }: BatchBuilderClientProps) {
-  const stockMax = Math.max(1, Math.floor(batch.remainingWeightLb / 0.75));
+  const stockMax =
+    batch.remainingWeightLb == null ? 10 : Math.max(1, Math.floor(batch.remainingWeightLb / 0.75));
   const [quantity, setQuantity] = useState(1);
   const { addItem, isLoading, variantQuantities } = useCart();
 
@@ -38,6 +42,10 @@ export function BatchBuilderClient({
   const canAdd = Math.max(0, stockMax - inCart);
   const maxQty = canAdd;
   const atStockLimit = inCart >= stockMax;
+  // Pre-launch: no quantity, price, or add-to-cart; show the founding-list CTA.
+  const canSell = SALES_OPEN && batch.basePrice != null && discountedPrice != null;
+  // Pre-launch only the "Fresh Roast" badge shows; discount badges imply prices.
+  const showFreshnessBadge = SALES_OPEN || freshnessState === 'fresh';
 
   const handleAddToCart = async () => {
     if (!batch.shopifyVariantId || canAdd === 0) return;
@@ -113,6 +121,7 @@ export function BatchBuilderClient({
         {/* Selection Area */}
         <section aria-label="Selection controls" className="space-y-8">
           {/* Quantity control */}
+          {canSell && (
           <div className="space-y-3">
             <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
               Quantity
@@ -146,6 +155,7 @@ export function BatchBuilderClient({
               </p>
             ) : null}
           </div>
+          )}
 
           {/* Roast Batch Panel */}
           <div className="space-y-3">
@@ -157,11 +167,13 @@ export function BatchBuilderClient({
               <p className="mt-1 text-[#4a4037]">
                 Roasted {roastDateFormatted} · {daysOld} days ago
               </p>
-              <div className="mt-2">
-                <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[freshnessState]}`}>
-                  {badgeLabel}
-                </span>
-              </div>
+              {showFreshnessBadge && (
+                <div className="mt-2">
+                  <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[freshnessState]}`}>
+                    {badgeLabel}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -169,7 +181,7 @@ export function BatchBuilderClient({
 
       {/* Right column: summary */}
       <aside
-        aria-label="Order summary"
+        aria-label={canSell ? 'Order summary' : 'Coffee summary'}
         className="space-y-4 rounded-2xl border border-[#e3d7c5] bg-[#f8f2e8] p-5"
       >
         <div className="space-y-2 text-base">
@@ -179,6 +191,12 @@ export function BatchBuilderClient({
           <p className="font-semibold">{batch.batchCode}</p>
           <p className="text-[#4a4037]">{batch.farmName} · {batch.lotCode} · {batch.origin}</p>
         </div>
+        {!canSell ? (
+          <div className="border-t border-[#e3d7c5] pt-4">
+            <FoundingListCTA variant="panel" />
+          </div>
+        ) : (
+        <>
         <div className="space-y-2 border-t border-[#e3d7c5] pt-4 text-base">
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#7a6a5a]">
             Selections
@@ -190,10 +208,10 @@ export function BatchBuilderClient({
             Pricing
           </p>
           <p className="text-lg font-semibold">
-            ${(discountedPrice * quantity).toFixed(2)}{' '}
+            ${(discountedPrice! * quantity).toFixed(2)}{' '}
             {isDiscounted && (
               <span className="ml-1 text-sm font-normal text-[#7a6a5a] line-through">
-                ${(batch.basePrice * quantity).toFixed(2)}
+                ${(batch.basePrice! * quantity).toFixed(2)}
               </span>
             )}
             <span className="ml-1 text-sm font-normal text-[#4a4037]">total</span>
@@ -231,6 +249,8 @@ export function BatchBuilderClient({
           >
             {isLoading ? 'Adding…' : inCart > 0 ? `${inCart} in cart · Add more` : 'Add to cart'}
           </button>
+        )}
+        </>
         )}
       </aside>
     </section>

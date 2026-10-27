@@ -1,5 +1,6 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
 import type React from 'react';
 import type { BatchCardViewModel } from '@/app/lib/types';
 import {
@@ -12,9 +13,12 @@ import {
   type FreshnessState,
   type StockStatus,
 } from '@/app/lib/freshness';
+import { useCart } from './CartContext';
+import { FoundingListCTA } from './FoundingListCTA';
+import { SALES_OPEN } from '@/app/lib/sales';
 
-function FreshnessMeter({ daysOld }: { daysOld: number }) {
-  const filled = getFilledSegments(daysOld);
+function FreshnessMeter({ roastDate, daysOld }: { roastDate: string; daysOld: number }) {
+  const filled = getFilledSegments(roastDate);
   return (
     <div className="flex items-center gap-2">
       <div className="flex gap-[2px]">
@@ -58,11 +62,29 @@ const stockBadgeStyles: Record<StockStatus, string> = {
 };
 
 export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
+  const { addItem, isLoading, variantQuantities } = useCart();
   const daysOld = getDaysOld(vm.roastDate);
-  const state = getFreshnessState(daysOld);
+  const state = getFreshnessState(vm.roastDate);
   const badgeLabel = getFreshnessBadgeLabel(state);
-  const price = getDiscountedPrice(vm.basePrice, daysOld);
-  const stockStatus = getStockStatus(vm.remainingWeightLb);
+  // Pre-launch there's no price (products are Draft) and nothing to buy.
+  const canSell = SALES_OPEN && vm.basePrice != null;
+  const price = vm.basePrice != null ? getDiscountedPrice(vm.basePrice, vm.roastDate) : null;
+  // Pre-launch only the "Fresh Roast" badge shows; the discount and stock badges imply prices.
+  const showFreshnessBadge = SALES_OPEN || state === 'fresh';
+
+  // Same per-batch stock cap as BatchBuilderClient (12oz bag ≈ 0.75 lb).
+  // Unknown stock (no inventory access) falls back to Shopify's own limits.
+  const stockMax =
+    vm.remainingWeightLb == null ? 10 : Math.max(1, Math.floor(vm.remainingWeightLb / 0.75));
+  const inCart = vm.shopifyVariantId ? (variantQuantities[vm.shopifyVariantId] ?? 0) : 0;
+  const atStockLimit = inCart >= stockMax;
+
+  const handleAddToCart = async () => {
+    if (!vm.shopifyVariantId || atStockLimit) return;
+    await addItem(vm.shopifyVariantId, 1, vm.batchCode);
+  };
+  const stockStatus =
+    !SALES_OPEN || vm.remainingWeightLb == null ? 'available' : getStockStatus(vm.remainingWeightLb);
   const roastDateFormatted = new Date(vm.roastDate).toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -126,12 +148,14 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
           <p className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.05em] text-[#7a6a5a]">
             Freshness
           </p>
-          <FreshnessMeter daysOld={daysOld} />
+          <FreshnessMeter roastDate={vm.roastDate} daysOld={daysOld} />
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[state]}`}>
-            {badgeLabel}
-          </span>
+          {showFreshnessBadge && (
+            <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[state]}`}>
+              {badgeLabel}
+            </span>
+          )}
           {stockStatus !== 'available' && (
             <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${stockBadgeStyles[stockStatus]}`}>
               {stockStatus === 'low' ? 'Almost Gone' : 'Selling Fast'}
@@ -140,24 +164,50 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
         </div>
       </div>
 
-      {/* Price + CTA */}
+      {/* Price + CTA (pre-launch: coming soon + founding-list signup) */}
+      {!canSell || price == null ? (
+        <div className="mt-auto">
+          <FoundingListCTA />
+        </div>
+      ) : (
       <div className="mt-auto space-y-3">
         <p className="text-base font-semibold text-[#2a2a2a]">
           ${price.toFixed(2)}
           <span className="ml-0.5 text-xs font-normal text-[#7a6a5a]">/12oz</span>
           {state !== 'fresh' && (
             <span className="ml-2 text-xs font-normal text-[#7a6a5a] line-through">
-              ${vm.basePrice.toFixed(2)}
+              ${vm.basePrice!.toFixed(2)}
             </span>
           )}
         </p>
-        <Link
-          href={`/coffee/${vm.batchId}`}
-          className="block w-full rounded-md bg-[#6b3e26] py-2.5 text-center text-base font-medium text-white transition-colors hover:bg-[#56311f]"
-        >
-          Build Your Bag
-        </Link>
+        {vm.shopifyVariantId === null ? (
+          <button
+            type="button"
+            disabled
+            className="block w-full cursor-not-allowed rounded-md bg-[#c4b49e] py-2.5 text-center text-base font-medium text-white"
+          >
+            Coming soon
+          </button>
+        ) : atStockLimit ? (
+          <button
+            type="button"
+            disabled
+            className="block w-full cursor-not-allowed rounded-md bg-[#c4b49e] py-2.5 text-center text-base font-medium text-white"
+          >
+            Max quantity in cart
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isLoading}
+            className="block w-full cursor-pointer rounded-md bg-[#6b3e26] py-2.5 text-center text-base font-medium text-white transition-colors hover:bg-[#56311f] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? 'Adding…' : inCart > 0 ? `${inCart} in cart · Add another` : 'Add to cart'}
+          </button>
+        )}
       </div>
+      )}
       </div>
     </article>
   );

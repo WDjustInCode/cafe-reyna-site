@@ -104,7 +104,7 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - `useBatchCount()`: returns `{ filteredCount, setFilteredCount }`.
 
 **`CartContext.tsx`** — Shopify cart state provider.
-- `CartProvider`: wraps root layout; persists `cartId` to localStorage (`cafe-reyna-cart`). On mount, rehydrates from localStorage via `getCart`.
+- `CartProvider`: wraps root layout; `addItem` opens the drawer after a successful add and falls back to creating a new cart if the stored cart can't be added to (expired/completed); persists `cartId` to localStorage (`cafe-reyna-cart`). On mount, rehydrates from localStorage via `getCart`.
 - `CartLine` interface: `{ lineId, variantId, quantity, batchCode, grindType }`.
 - `useCart()`: returns `{ itemCount, isLoading, isCartOpen, cartLines, variantQuantities, openCart, closeCart, addItem, updateItem, removeItem, checkout }`.
 - `CartButton`: pill button with item count badge (capped at "9+"). Opens the cart drawer.
@@ -121,7 +121,7 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 - Same form and API call as `SubscribePopup`; stacked layout with name fields in a 2-col grid.
 - Positioned between `WhyReyna` and the Final CTA.
 
-**`CartDrawer.tsx`** — Slide-in cart panel (right side, fixed, z-50). Locks body scroll when open. Shows line items with inline quantity steppers (decrement to 1 removes the line, ✕ icon at qty 1). Footer shows total bag count and Checkout button that redirects to Shopify checkout URL.
+**`CartDrawer.tsx`** — Slide-in cart panel (right side, fixed, z-50). Locks body scroll when open. Shows line items with inline quantity steppers (decrement to 1 removes the line, ✕ icon at qty 1). Line items show batch code + Shopify product title. Footer shows total bag count, Shopify cart subtotal, and Checkout button that redirects to Shopify checkout URL.
 
 **`BatchBuilderClient.tsx`** — Client component for the batch detail two-column layout.
 - Props: `batch`, `daysOld`, `freshnessState`, `badgeLabel`, `discountedPrice`, `isDiscounted`, `roastDateFormatted` (all computed server-side).
@@ -134,7 +134,8 @@ Fetches `fetchFarmerPageData()` and finds the farmer by ID. Displays farmer port
 
 **`BatchGrid.tsx`** — Async server component. Accepts prefetched batches or fetches them. Handles error/empty states. Delegates rendering to `BatchGridClient`.
 
-**`BatchCard.tsx`** — Single batch card.
+**`BatchCard.tsx`** — Single batch card. Now a **Client Component** (`'use client'`, uses `useCart`); rendered by `BatchGridClient`.
+- CTA: "Add to cart" (adds 1 bag of the mapped Shopify variant and opens `CartDrawer`; shows "N in cart · Add another" / "Max quantity in cart" using the same `stockMax` rule as the builder), or a disabled "Coming soon" when `shopifyVariantId` is null. The card no longer links to `/coffee/[batchId]` (the builder page still exists but nothing on the site links to it).
 - Inline `FreshnessMeter` sub-function (10-segment progress bar).
 - Inline `MetaCell` sub-component for metadata display with icons.
 - Header identity block: farm name (h3) → Batch `{batchCode}` in Geist Mono → Region `{origin}`.
@@ -180,10 +181,10 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 ### `src/app/lib/freshness.ts` — Pure freshness utilities
 
 - `getDaysOld(roastDateIso)` — days between roast date and today (midnight-adjusted)
-- `isVisible(daysOld)` — true if daysOld < 56
+- `isVisible(daysOld)` — true if the batch is under 3 calendar months old (US Eastern)
 - `getFilledSegments(daysOld)` — 0–10 segments for the freshness meter
 - `getFreshnessState(daysOld)` → `'fresh' | 'value' | 'clearance'`
-- `getFreshnessBadgeLabel(state)` → `"Fresh Roast"` / `"Great Value · 10% Off"` / `"Roast Clearance · 40% Off"`
+- `getFreshnessBadgeLabel(state)` → `"Fresh Roast"` / `"Great Value · 15% Off"` / `"Roast Clearance · 30% Off"`
 - `getStockStatus(remainingLb)` → `'low' | 'selling-fast' | 'available'`
 - `getDiscountedPrice(basePrice, daysOld)` → full / 90% / 70% of base
 
@@ -191,12 +192,12 @@ StockStatus    = 'low' | 'selling-fast' | 'available'
 
 | Days since roast | Badge label | Price |
 |---|---|---|
-| 0–14 | Fresh Roast | 100% |
-| 14–28 | Great Value · 10% Off | 90% |
-| 28–56 | Roast Clearance · 40% Off | 70% |
-| 56+ | Hidden / removed | — |
+| < 1 month | Fresh Roast | 100% |
+| 1–2 months | Great Value · 15% Off | 85% |
+| 2–3 months | Roast Clearance · 30% Off | 70% |
+| 3 months + | Hidden / removed | — |
 
-> Note: The spec files say "20% off" and "50% off" but the **actual code** uses 10% and 30% discounts (90% and 70% of base price).
+> Schedule set by Justin 2026-10-24. Steps are **calendar months** from the roast date, starting at midnight US Eastern (roasted 10/14 → 15% from 11/14, 30% from 12/14, removed 1/14). Freshness functions take the roast date string, not a day count. Shopify checkout applies the same discounts via scheduled automatic discounts (set up by CR Ops), so card and checkout prices match.
 
 ### `src/app/api/subscribe/route.ts` — Email capture endpoint
 
@@ -209,7 +210,7 @@ Both emails fire in parallel via `Promise.all`. Requires `RESEND_API_KEY` and `R
 
 ### `src/app/lib/shopify.ts` — Shopify Storefront API
 
-Uses `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` and `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` env vars. API version: `2025-01`. All cart mutations attach `Grind Preference` and `Batch Code` as line item attributes.
+Uses `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` and `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` env vars, falling back to `cafe-reyna.myshopify.com` and the public Headless-channel Storefront token hardcoded in the file (public tokens are safe in client code; the fallback keeps Vercel previews working without env vars). API version: `2026-10` (Shopify supports each version ~12 months — bump when it nears deprecation). All cart mutations attach `Batch Code` as a line item attribute. Cart query includes `cost.subtotalAmount` and each line's product title (shown in `CartDrawer`).
 
 Exports:
 - `ShopifyCart` interface
@@ -219,33 +220,22 @@ Exports:
 - `removeCartItem(cartId, lineId)` — `cartLinesRemove` mutation
 - `getCart(cartId)` — `cart` query, returns `ShopifyCart | null`
 
-### `src/app/lib/api.ts` — Data fetching
+### `src/app/lib/api.ts` — Data fetching (Shopify)
 
-**MockAPI.io base URL:** `https://69b80a0effbcd02860970059.mockapi.io`
-- Endpoints: `/farm`, `/lot`, `/roastBatch`, `/farmers`
-- `roast_date` is a **Unix timestamp in seconds** — multiply by 1000 before `new Date()`
-- `basePrice` is camelCase on `ApiRoastBatch`
+All coffee data lives in Shopify metaobjects and is read with the public Storefront token (`storefrontFetch` from `shopify.ts`, ISR 300s). MockAPI.io is retired but left intact.
 
-Exports:
-- `fetchJson<T>(url)` — generic fetch with error handling
-- `fetchFarmers()` — ISR 300s
-- `fetchFarmerPageData()` — builds `FarmerPageViewModel[]`, ISR 300s
-- `fetchProcessInventory()` — `Record<string, number>` (lbs by process), ISR 300s
-- `fetchVarietalInventory()` — `Record<string, number>` (lbs by varietal), ISR 300s
-- `fetchRegionInventory()` — `Record<string, number>` (lbs by region, joins farm+lot), ISR 300s
-- `fetchAllBatchViewModels()` — joins farm+lot+batch, filters 56+ day old & zero inventory, sorts `roast_date DESC`, **no ISR** (cache: 'no-store')
-- `fetchBatchById(batchId)` — returns `BatchCardViewModel | null`
+```
+product ─ bag.current_batch ─▶ roast_batch ─ lot ─▶ coffee_lot ─ farm ─▶ coffee_farm ─ farmers ─▶ coffee_farmer
+                                                     └─ awards ─▶ coffee_award
+```
 
----
+- Price = the product's first variant price. Displayed price still applies the `freshness.ts` discount (not applied at checkout).
+- Stock = variant `quantityAvailable` × 0.75 lb. Needs the `unauthenticated_read_product_inventory` scope on the Headless token; without it `remainingWeightLb` is `null`, stock badges are hidden and the per-batch cap falls back to 10 bags.
+- IDs in URLs are metaobject handles: `/coffee/la-2610-l1-b1`, `/farmers/cecilia-quan`.
+- Farm photos are still `/public/farm{1,2}.webp`; `FARM_IMAGE_ID` maps farm handles to those numbers (`farmId`).
+- Shopify date fields are `YYYY-MM-DD`, read as local midnight.
 
-## Styling
-
-- **Tailwind v4** — `@import "tailwindcss"` at top of `globals.css`; do NOT use v3 plugin syntax
-- **Headings (h1–h6)** — Copperplate, uppercase, 500 weight, `#6a4322` brown, line-height 1.05
-- **Body** — Geist Sans (next/font/google); Geist Mono for batch codes
-- **Adobe Typekit** — Copperplate loaded via `zgl0jvg.css` in `layout.tsx`
-- **Custom animations** — `animate-bean-pulse` (keyframes in globals.css): opacity + scale, 2s infinite; used on hero scroll-down arrow. `hero-card-enter` (keyframes in globals.css): fade + translateY(20px→0), 0.6s ease-out with 0.15s delay; applied via `.hero-card-enter` class
-- **Hex colors in className** — extensive use of `bg-[#f4ede4]`, `text-[#6b3e26]`, etc.
+Exports: `fetchAllBatchViewModels`, `fetchBatchById`, `fetchFarmers` (`FarmerCardViewModel[]`), `fetchFarmerPageData`, `fetchProcessInventory`, `fetchVarietalInventory`, `fetchRegionInventory`.
 
 ### Color palette
 
@@ -259,9 +249,9 @@ Exports:
 | Secondary text | `#4a4037` | Subheadings, labels |
 | Label text | `#7a6a5a` | Muted metadata |
 | Border | `#e3d7c5` | Card / section borders |
-| Fresh badge | bg `#e8f5e9` / text `#2e7d32` | 0–14d |
-| Value badge | bg `#fff8e1` / text `#f57c00` | 14–28d |
-| Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 28–56d |
+| Fresh badge | bg `#e8f5e9` / text `#2e7d32` | < 1 mo |
+| Value badge | bg `#fff8e1` / text `#f57c00` | 1–2 mo |
+| Clearance badge | bg `#f5f0eb` / text `#7a6a5a` | 2–3 mo |
 
 ---
 
@@ -334,6 +324,6 @@ Exports:
 - Checkout flow and payment (cart exists; checkout redirects to Shopify via `checkoutUrl`)
 - Customer authentication
 - Bulk orders section (referenced in spec)
-- `RoastBatchVariantMap` table for Shopify variant mapping (currently `shopify_variant_id` stored directly on `ApiRoastBatch`)
+- Freshness discounts at checkout (card prices are discounted client-side only; Shopify charges the product's list price)
 - Farmer CMS / content management
-- Pricing display in CartDrawer (Shopify price data not yet fetched into cart lines)
+- Per-line pricing in CartDrawer (drawer shows Shopify's cart subtotal only)

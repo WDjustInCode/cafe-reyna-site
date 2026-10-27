@@ -10,6 +10,7 @@ import {
 } from '@/app/lib/freshness';
 import { BatchBuilderClient } from '@/app/components/BatchBuilderClient';
 import { CartButton } from '@/app/components/CartContext';
+import { SALES_OPEN } from '@/app/lib/sales';
 import { HamburgerMenu } from '@/app/components/HamburgerMenu';
 
 interface BatchPageParams {
@@ -23,9 +24,10 @@ export default async function BatchPage({ params }: { params: Promise<BatchPageP
   if (!batch) notFound();
 
   const daysOld = getDaysOld(batch.roastDate);
-  const freshnessState = getFreshnessState(daysOld);
+  const freshnessState = getFreshnessState(batch.roastDate);
   const badgeLabel = getFreshnessBadgeLabel(freshnessState);
-  const discountedPrice = getDiscountedPrice(batch.basePrice, daysOld);
+  const discountedPrice =
+    batch.basePrice != null ? getDiscountedPrice(batch.basePrice, batch.roastDate) : null;
   const isDiscounted = freshnessState !== 'fresh';
 
   const roastDateFormatted = new Date(batch.roastDate).toLocaleDateString('en-US', {
@@ -50,7 +52,7 @@ export default async function BatchPage({ params }: { params: Promise<BatchPageP
               />
             </Link>
             <div className="flex items-center gap-3">
-              <CartButton />
+              {SALES_OPEN && <CartButton />}
               <HamburgerMenu basePath="/" />
             </div>
           </div>

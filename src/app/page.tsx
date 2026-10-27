@@ -11,16 +11,20 @@ import { OurFarmers } from './components/OurFarmers';
 import { WhyReyna } from './components/WhyReyna';
 import { SubscribeSection } from './components/SubscribeSection';
 import { fetchAllBatchViewModels, fetchRegionInventory, fetchVarietalInventory, fetchProcessInventory } from './lib/api';
+import { processMatches } from './lib/process';
 import { BatchCountProvider } from './components/BatchCountContext';
 import { CartButton } from './components/CartContext';
 import { HamburgerMenu } from './components/HamburgerMenu';
+import { SALES_OPEN } from './lib/sales';
 
 export default async function Home() {
   const [batches, regionInventory, varietalInventory, processInventory] = await Promise.all([
     fetchAllBatchViewModels().catch(() => []),
-    fetchRegionInventory().catch(() => ({})),
-    fetchVarietalInventory().catch(() => ({})),
-    fetchProcessInventory().catch(() => ({})),
+    // null = lb unknown (pre-launch / no inventory scope / error): sections stay
+    // clickable and hide their lb counts.
+    fetchRegionInventory().catch(() => null),
+    fetchVarietalInventory().catch(() => null),
+    fetchProcessInventory().catch(() => null),
   ]);
 
   return (
@@ -49,7 +53,7 @@ export default async function Home() {
               <a href="#why-cafe-reyna">Why Café Reyna</a>
             </nav>
             <div className="flex items-center gap-3">
-              <CartButton />
+              {SALES_OPEN && <CartButton />}
               <HamburgerMenu />
             </div>
           </div>
@@ -168,8 +172,9 @@ export default async function Home() {
             </p>
             <h2>Freshly roasted batches</h2>
             <p className="max-w-2xl text-base leading-relaxed text-[#4a4037]">
-              Browse our latest roast batches, each tied to a specific farm,
-              lot, and roast date. Pricing adjusts based on freshness.
+              {SALES_OPEN
+                ? 'Browse our latest roast batches, each tied to a specific farm, lot, and roast date. Pricing adjusts based on freshness.'
+                : 'Meet our first roast batches, each tied to a specific farm, lot, and roast date. Orders open once our state permit comes through. Join the founding list to hear the day they do.'}
             </p>
           </header>
           <Suspense fallback={<BatchGridSkeleton />}>
@@ -184,12 +189,12 @@ export default async function Home() {
 
         {/* 6. Honduras Regions */}
         <Suspense fallback={null}>
-          <HondurasRegions regionInventory={regionInventory} />
+          <HondurasRegions regionInventory={regionInventory ?? undefined} />
         </Suspense>
 
         {/* 6. Honduran Varietals */}
         <Suspense fallback={null}>
-          <HonduranVarietals varietalInventory={varietalInventory} />
+          <HonduranVarietals varietalInventory={varietalInventory ?? undefined} />
         </Suspense>
 
         {/* 7. Process Comparison */}
@@ -210,9 +215,11 @@ export default async function Home() {
           </header>
           <Suspense fallback={null}>
             {(() => {
-              function processLbs(key: string) {
-                const entry = Object.entries(processInventory).find(([k]) => k.startsWith(key));
-                return entry ? entry[1] : 0;
+              function processLbs(key: string): number | undefined {
+                if (!processInventory) return undefined;
+                return Object.entries(processInventory)
+                  .filter(([k]) => processMatches(k, key))
+                  .reduce((sum, [, lb]) => sum + lb, 0);
               }
               return (
                 <div className="grid gap-6 md:grid-cols-3">

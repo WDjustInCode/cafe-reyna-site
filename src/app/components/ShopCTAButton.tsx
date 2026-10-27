@@ -1,10 +1,15 @@
 'use client';
 
 import { useBatchCount } from './BatchCountContext';
+import { SALES_OPEN } from '@/app/lib/sales';
 
 export function ShopCTAButton() {
   const { filteredCount } = useBatchCount();
-  const label = filteredCount === 1 ? 'Build Your Bag' : 'Shop current coffee';
+  const label = !SALES_OPEN
+    ? 'See our coffee'
+    : filteredCount === 1
+      ? 'Build Your Bag'
+      : 'Shop current coffee';
 
   return (
     <a

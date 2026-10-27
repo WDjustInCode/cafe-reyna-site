@@ -2,8 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { fetchFarmers } from '../lib/api';
 
-const FARMER_IMAGE_COUNT = 3;
-
 export async function OurFarmers() {
   let farmers;
   try {
@@ -31,8 +29,6 @@ export async function OurFarmers() {
 
       <div className="grid gap-6 md:grid-cols-3">
         {farmers.map((farmer) => {
-          const imageNum = parseInt(farmer.id, 10);
-          const hasImage = imageNum >= 1 && imageNum <= FARMER_IMAGE_COUNT;
           const location = [farmer.region, farmer.country]
             .filter(Boolean)
             .join(', ');
@@ -43,9 +39,9 @@ export async function OurFarmers() {
               href={`/farmers/${farmer.id}`}
               className="group relative block aspect-[3/4] w-full overflow-hidden rounded-2xl"
             >
-              {hasImage && (
+              {farmer.photoSrc && (
                 <Image
-                  src={`/farmer${imageNum}.webp`}
+                  src={farmer.photoSrc}
                   alt={farmer.name}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"

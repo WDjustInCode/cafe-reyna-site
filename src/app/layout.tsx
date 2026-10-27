@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "./components/CartContext";
 import { CartDrawer } from "./components/CartDrawer";
 import { SubscribePopup } from "./components/SubscribePopup";
+import { SALES_OPEN } from "./lib/sales";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,7 @@ export default function RootLayout({
       >
         <CartProvider>
           {children}
-          <CartDrawer />
+          {SALES_OPEN && <CartDrawer />}
           <SubscribePopup />
         </CartProvider>
       </body>

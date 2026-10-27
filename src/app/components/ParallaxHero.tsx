@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useRive, Layout, Fit, Alignment } from '@rive-app/react-canvas';
+import { SALES_OPEN } from '@/app/lib/sales';
 
 function HeroRive() {
   const { RiveComponent } = useRive({
@@ -88,7 +89,7 @@ export function ParallaxHero() {
                 }}
                 className="rounded-full bg-[#f5ebdc] px-6 py-2.5 text-sm sm:text-[clamp(0.75rem,1.2vw,1rem)] font-medium text-[#3a2b1c] shadow-sm hover:bg-white"
               >
-                Shop Coffee
+                {SALES_OPEN ? 'Shop Coffee' : 'See Our Coffee'}
               </a>
               <a
                 href="#how-our-coffee-works"

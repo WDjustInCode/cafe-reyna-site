@@ -11,6 +11,7 @@ export interface CartLine {
   variantId: string;
   quantity: number;
   batchCode: string;
+  productTitle: string;
 }
 
 interface CartContextValue {
@@ -18,6 +19,7 @@ interface CartContextValue {
   isLoading: boolean;
   isCartOpen: boolean;
   cartLines: CartLine[];
+  subtotal: { amount: number; currencyCode: string } | null;
   variantQuantities: Record<string, number>;
   openCart: () => void;
   closeCart: () => void;
@@ -37,6 +39,7 @@ function parseLines(cart: ShopifyCart): CartLine[] {
       variantId: node.merchandise.id,
       quantity: node.quantity,
       batchCode: attrs['Batch Code'] ?? '',
+      productTitle: node.merchandise.product?.title ?? '',
     };
   });
 }
@@ -56,6 +59,7 @@ function applyCart(
     setCheckoutUrl: (url: string) => void;
     setItemCount: (n: number) => void;
     setCartLines: (lines: CartLine[]) => void;
+    setSubtotal: (s: { amount: number; currencyCode: string } | null) => void;
     setVariantQuantities: (q: Record<string, number>) => void;
   },
 ) {
@@ -64,6 +68,8 @@ function applyCart(
   setters.setCheckoutUrl(cart.checkoutUrl);
   setters.setItemCount(cart.totalQuantity);
   setters.setCartLines(lines);
+  const sub = cart.cost?.subtotalAmount;
+  setters.setSubtotal(sub ? { amount: parseFloat(sub.amount), currencyCode: sub.currencyCode } : null);
   setters.setVariantQuantities(buildVariantQuantities(lines));
 }
 
@@ -72,11 +78,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [itemCount, setItemCount] = useState(0);
   const [cartLines, setCartLines] = useState<CartLine[]>([]);
+  const [subtotal, setSubtotal] = useState<{ amount: number; currencyCode: string } | null>(null);
   const [variantQuantities, setVariantQuantities] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const setters = { setCartId, setCheckoutUrl, setItemCount, setCartLines, setVariantQuantities };
+  const setters = { setCartId, setCheckoutUrl, setItemCount, setCartLines, setSubtotal, setVariantQuantities };
 
   useEffect(() => {
     const storedId = localStorage.getItem(CART_STORAGE_KEY);
@@ -95,14 +102,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   async function addItem(variantId: string, quantity: number, batchCode: string) {
     setIsLoading(true);
     try {
-      let cart;
+      let cart: ShopifyCart | null = null;
       if (cartId) {
-        cart = await addCartItem(cartId, variantId, quantity, batchCode);
-      } else {
+        try {
+          cart = await addCartItem(cartId, variantId, quantity, batchCode);
+        } catch (err) {
+          // Stored cart may be expired/completed — start a fresh one.
+          console.warn('Cart add failed, creating a new cart:', err);
+          cart = null;
+        }
+      }
+      if (!cart) {
         cart = await createCartWithItem(variantId, quantity, batchCode);
         localStorage.setItem(CART_STORAGE_KEY, cart.id);
       }
       applyCart(cart, setters);
+      setIsCartOpen(true);
     } catch (err) {
       console.error('Cart error:', err);
     } finally {
@@ -142,7 +157,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider value={{
-      itemCount, isLoading, isCartOpen, cartLines, variantQuantities,
+      itemCount, isLoading, isCartOpen, cartLines, subtotal, variantQuantities,
       openCart: () => setIsCartOpen(true),
       closeCart: () => setIsCartOpen(false),
       addItem, updateItem, removeItem, checkout,
