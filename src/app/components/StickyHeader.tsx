@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { CartButton } from './CartContext';
+import { SALES_OPEN } from '@/app/lib/sales';
 import { HamburgerMenu } from './HamburgerMenu';
 
 export function StickyHeader() {
@@ -66,7 +67,7 @@ export function StickyHeader() {
             <a href="#why-cafe-reyna">Why Café Reyna</a>
           </nav>
           <div className="flex items-center gap-3">
-            <CartButton />
+            {SALES_OPEN && <CartButton />}
             <HamburgerMenu basePath="/" />
           </div>
         </div>

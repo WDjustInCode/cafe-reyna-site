@@ -6,6 +6,10 @@
 //
 // Price and stock come from the product variant. Stock is shown in pounds
 // (bags × 0.75 lb per 12oz bag).
+//
+// Pre-launch (SALES_OPEN false, see sales.ts) the products are Draft and hidden
+// from the Storefront API, so batches are read straight from the roast_batch
+// metaobjects instead, with no price, stock, or variant.
 import type {
   ApiAward,
   BatchCardViewModel,
@@ -16,6 +20,7 @@ import type {
 } from './types';
 import { isVisible } from './freshness';
 import { storefrontFetch } from './shopify';
+import { SALES_OPEN } from './sales';
 
 const BAG_WEIGHT_LB = 0.75;
 const ISR = { next: { revalidate: 300 } } as const;
@@ -161,6 +166,30 @@ const BATCHES_QUERY = `
     }
   }`;
 
+// Pre-launch: same batch → lot → farm shape, read from the metaobjects
+// directly (works while the products are Draft).
+const BATCH_METAOBJECTS_QUERY = `
+  query BatchMetaobjects {
+    metaobjects(type: "roast_batch", first: 100) {
+      nodes {
+        id handle
+        fields {
+          key value
+          reference {
+            ... on Metaobject {
+              id handle
+              fields {
+                key value
+                reference { ... on Metaobject { id handle ${FIELDS} } }
+                references(first: 20) { nodes { ... on Metaobject { id handle ${FIELDS} } } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }`;
+
 const FARMERS_QUERY = `
   query Farmers {
     farmers: metaobjects(type: "coffee_farmer", first: 50) { nodes { id handle ${FIELDS} } }
@@ -208,43 +237,90 @@ async function queryBatchProducts(): Promise<ProductNode[]> {
 
 // ── Batches ──────────────────────────────────────────────────────────────
 
-export async function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
+interface SalesInfo {
+  basePrice: number | null;
+  remainingWeightLb: number | null;
+  shopifyVariantId: string | null;
+  shopifyHandle: string | null;
+}
+
+const NO_SALES: SalesInfo = {
+  basePrice: null,
+  remainingWeightLb: null,
+  shopifyVariantId: null,
+  shopifyHandle: null,
+};
+
+/** roast_batch metaobject (with nested lot and farm) → card view model. */
+function toBatchViewModel(
+  batch: Metaobject | null | undefined,
+  sales: SalesInfo,
+): BatchCardViewModel | null {
+  const lot = ref(batch, 'lot');
+  const farm = ref(lot, 'farm');
+  const roastDate = dateToIso(str(batch, 'roast_date'));
+  if (!batch || !lot || !farm || !roastDate) return null;
+
+  return {
+    batchId: batch.handle,
+    batchCode: str(batch, 'batch_code') ?? batch.handle,
+    farmId: FARM_IMAGE_ID[farm.handle] ?? farm.handle,
+    farmName: str(farm, 'name') ?? '',
+    lotCode: str(lot, 'lot_code') ?? lot.handle,
+    origin: str(farm, 'region') ?? 'Honduras',
+    process: str(lot, 'process') ?? '',
+    varietal: list(lot, 'varietals'),
+    roastLevel: str(batch, 'roast_level') ?? '',
+    roastDate,
+    notes: list(lot, 'tasting_notes'),
+    elevation: formatElevation(num(farm, 'elevation_m'), num(farm, 'elevation_m_max')),
+    ...sales,
+  };
+}
+
+const newestFirst = (a: BatchCardViewModel, b: BatchCardViewModel) =>
+  new Date(b.roastDate).getTime() - new Date(a.roastDate).getTime();
+
+/** Sales open: batches come from the products on sale, with price and stock. */
+async function fetchSaleBatchViewModels(): Promise<BatchCardViewModel[]> {
   const products = await queryBatchProducts();
 
   return products
     .flatMap((product): BatchCardViewModel[] => {
-      const batch = product.currentBatch?.reference;
-      const lot = ref(batch, 'lot');
-      const farm = ref(lot, 'farm');
       const variant = product.variants.nodes[0];
-      const roastDate = dateToIso(str(batch, 'roast_date'));
-      if (!batch || !lot || !farm || !variant || !roastDate) return [];
-      if (!variant.availableForSale) return [];
+      if (!variant || !variant.availableForSale) return [];
 
       const qty = variant.quantityAvailable;
-      return [
-        {
-          batchId: batch.handle,
-          batchCode: str(batch, 'batch_code') ?? batch.handle,
-          farmId: FARM_IMAGE_ID[farm.handle] ?? farm.handle,
-          farmName: str(farm, 'name') ?? '',
-          lotCode: str(lot, 'lot_code') ?? lot.handle,
-          origin: str(farm, 'region') ?? 'Honduras',
-          process: str(lot, 'process') ?? '',
-          varietal: list(lot, 'varietals'),
-          roastLevel: str(batch, 'roast_level') ?? '',
-          roastDate,
-          notes: list(lot, 'tasting_notes'),
-          basePrice: Number(variant.price.amount),
-          remainingWeightLb: typeof qty === 'number' ? qty * BAG_WEIGHT_LB : null,
-          elevation: formatElevation(num(farm, 'elevation_m'), num(farm, 'elevation_m_max')),
-          shopifyVariantId: variant.id,
-          shopifyHandle: product.handle,
-        },
-      ];
+      const vm = toBatchViewModel(product.currentBatch?.reference, {
+        basePrice: Number(variant.price.amount),
+        remainingWeightLb: typeof qty === 'number' ? qty * BAG_WEIGHT_LB : null,
+        shopifyVariantId: variant.id,
+        shopifyHandle: product.handle,
+      });
+      return vm ? [vm] : [];
     })
     .filter((vm) => isVisible(vm.roastDate) && (vm.remainingWeightLb ?? 1) > 0)
-    .sort((a, b) => new Date(b.roastDate).getTime() - new Date(a.roastDate).getTime());
+    .sort(newestFirst);
+}
+
+/** Pre-launch: batches straight from the roast_batch metaobjects, no sales data. */
+async function fetchPrelaunchBatchViewModels(): Promise<BatchCardViewModel[]> {
+  const data = await storefrontFetch<{ metaobjects: { nodes: Metaobject[] } }>(
+    BATCH_METAOBJECTS_QUERY,
+    undefined,
+    ISR,
+  );
+  return data.metaobjects.nodes
+    .flatMap((batch) => {
+      const vm = toBatchViewModel(batch, NO_SALES);
+      return vm ? [vm] : [];
+    })
+    .filter((vm) => isVisible(vm.roastDate))
+    .sort(newestFirst);
+}
+
+export function fetchAllBatchViewModels(): Promise<BatchCardViewModel[]> {
+  return SALES_OPEN ? fetchSaleBatchViewModels() : fetchPrelaunchBatchViewModels();
 }
 
 export async function fetchBatchById(batchId: string): Promise<BatchCardViewModel | null> {
@@ -253,11 +329,16 @@ export async function fetchBatchById(batchId: string): Promise<BatchCardViewMode
 }
 
 // Inventory rollups (lb of roasted coffee on sale) for the home-page sections.
-// Without the inventory scope a batch counts as 0 lb.
+// Returns null when no batch has a known weight (pre-launch, or no inventory
+// scope), so the sections stay clickable and hide their lb counts instead of
+// looking sold out. Otherwise a batch with unknown stock counts as 0 lb.
 type Rollup = (vm: BatchCardViewModel) => string[];
 
-async function rollup(keysFor: Rollup): Promise<Record<string, number>> {
+async function rollup(keysFor: Rollup): Promise<Record<string, number> | null> {
   const batches = await fetchAllBatchViewModels();
+  const lbUnknown =
+    !SALES_OPEN || (batches.length > 0 && batches.every((vm) => vm.remainingWeightLb == null));
+  if (lbUnknown) return null;
   const inventory: Record<string, number> = {};
   for (const vm of batches) {
     const lb = vm.remainingWeightLb ?? 0;
@@ -266,15 +347,15 @@ async function rollup(keysFor: Rollup): Promise<Record<string, number>> {
   return inventory;
 }
 
-export function fetchProcessInventory(): Promise<Record<string, number>> {
+export function fetchProcessInventory(): Promise<Record<string, number> | null> {
   return rollup((vm) => (vm.process ? [vm.process.toLowerCase()] : []));
 }
 
-export function fetchVarietalInventory(): Promise<Record<string, number>> {
+export function fetchVarietalInventory(): Promise<Record<string, number> | null> {
   return rollup((vm) => vm.varietal);
 }
 
-export function fetchRegionInventory(): Promise<Record<string, number>> {
+export function fetchRegionInventory(): Promise<Record<string, number> | null> {
   return rollup((vm) => (vm.origin ? [vm.origin] : []));
 }
 

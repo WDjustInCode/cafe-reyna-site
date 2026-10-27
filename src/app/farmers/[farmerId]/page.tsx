@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { fetchFarmerPageData } from '../../lib/api';
 import { CartButton } from '@/app/components/CartContext';
+import { SALES_OPEN } from '@/app/lib/sales';
 import { HamburgerMenu } from '@/app/components/HamburgerMenu';
 import type { ApiAward, FarmSectionViewModel, LotCardViewModel } from '../../lib/types';
 
@@ -139,7 +140,7 @@ export default async function FarmerPage({ params }: FarmerPageProps) {
               />
             </Link>
             <div className="flex items-center gap-3">
-              <CartButton />
+              {SALES_OPEN && <CartButton />}
               <HamburgerMenu basePath="/" />
             </div>
           </div>

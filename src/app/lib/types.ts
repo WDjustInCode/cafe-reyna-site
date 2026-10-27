@@ -90,7 +90,8 @@ export interface BatchCardViewModel {
   roastLevel: string;
   roastDate: string;
   notes: string[];
-  basePrice: number;
+  /** Full (undiscounted) price of a 12oz bag. Null pre-launch (products are Draft). */
+  basePrice: number | null;
   /** Roasted lb on hand (Shopify bag count × 0.75). Null if Shopify inventory isn't readable. */
   remainingWeightLb: number | null;
   elevation: string | null;

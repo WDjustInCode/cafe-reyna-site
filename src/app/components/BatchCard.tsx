@@ -14,6 +14,8 @@ import {
   type StockStatus,
 } from '@/app/lib/freshness';
 import { useCart } from './CartContext';
+import { FoundingListCTA } from './FoundingListCTA';
+import { SALES_OPEN } from '@/app/lib/sales';
 
 function FreshnessMeter({ roastDate, daysOld }: { roastDate: string; daysOld: number }) {
   const filled = getFilledSegments(roastDate);
@@ -64,7 +66,11 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
   const daysOld = getDaysOld(vm.roastDate);
   const state = getFreshnessState(vm.roastDate);
   const badgeLabel = getFreshnessBadgeLabel(state);
-  const price = getDiscountedPrice(vm.basePrice, vm.roastDate);
+  // Pre-launch there's no price (products are Draft) and nothing to buy.
+  const canSell = SALES_OPEN && vm.basePrice != null;
+  const price = vm.basePrice != null ? getDiscountedPrice(vm.basePrice, vm.roastDate) : null;
+  // Pre-launch only the "Fresh Roast" badge shows; the discount and stock badges imply prices.
+  const showFreshnessBadge = SALES_OPEN || state === 'fresh';
 
   // Same per-batch stock cap as BatchBuilderClient (12oz bag ≈ 0.75 lb).
   // Unknown stock (no inventory access) falls back to Shopify's own limits.
@@ -77,7 +83,8 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
     if (!vm.shopifyVariantId || atStockLimit) return;
     await addItem(vm.shopifyVariantId, 1, vm.batchCode);
   };
-  const stockStatus = vm.remainingWeightLb == null ? 'available' : getStockStatus(vm.remainingWeightLb);
+  const stockStatus =
+    !SALES_OPEN || vm.remainingWeightLb == null ? 'available' : getStockStatus(vm.remainingWeightLb);
   const roastDateFormatted = new Date(vm.roastDate).toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -144,9 +151,11 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
           <FreshnessMeter roastDate={vm.roastDate} daysOld={daysOld} />
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[state]}`}>
-            {badgeLabel}
-          </span>
+          {showFreshnessBadge && (
+            <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${badgeStyles[state]}`}>
+              {badgeLabel}
+            </span>
+          )}
           {stockStatus !== 'available' && (
             <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${stockBadgeStyles[stockStatus]}`}>
               {stockStatus === 'low' ? 'Almost Gone' : 'Selling Fast'}
@@ -155,14 +164,19 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
         </div>
       </div>
 
-      {/* Price + CTA */}
+      {/* Price + CTA (pre-launch: coming soon + founding-list signup) */}
+      {!canSell || price == null ? (
+        <div className="mt-auto">
+          <FoundingListCTA />
+        </div>
+      ) : (
       <div className="mt-auto space-y-3">
         <p className="text-base font-semibold text-[#2a2a2a]">
           ${price.toFixed(2)}
           <span className="ml-0.5 text-xs font-normal text-[#7a6a5a]">/12oz</span>
           {state !== 'fresh' && (
             <span className="ml-2 text-xs font-normal text-[#7a6a5a] line-through">
-              ${vm.basePrice.toFixed(2)}
+              ${vm.basePrice!.toFixed(2)}
             </span>
           )}
         </p>
@@ -193,6 +207,7 @@ export function BatchCard({ vm }: { vm: BatchCardViewModel }) {
           </button>
         )}
       </div>
+      )}
       </div>
     </article>
   );

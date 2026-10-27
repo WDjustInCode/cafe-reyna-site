@@ -3,6 +3,12 @@
 import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'cafe-reyna-subscribed-v2';
+const OPEN_EVENT = 'cafe-reyna:open-subscribe';
+
+/** Open the signup popup on demand (e.g. "Join the founding list" buttons), even if it was dismissed before. */
+export function openSubscribePopup() {
+  window.dispatchEvent(new Event(OPEN_EVENT));
+}
 const NAME_PATTERN = /^[A-Za-zÀ-ÿ'\- ]{1,50}$/;
 
 const inputClass =
@@ -21,6 +27,16 @@ export function SubscribePopup() {
     if (localStorage.getItem(STORAGE_KEY)) return;
     const timer = setTimeout(() => setMounted(true), 2000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Manual opens ignore the dismissed/subscribed flag.
+  useEffect(() => {
+    const onOpen = () => {
+      setMounted(true);
+      requestAnimationFrame(() => setOpen(true));
+    };
+    window.addEventListener(OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_EVENT, onOpen);
   }, []);
 
   useEffect(() => {
