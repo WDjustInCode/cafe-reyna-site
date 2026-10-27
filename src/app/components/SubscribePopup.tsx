@@ -94,7 +94,7 @@ export function SubscribePopup() {
             <p className="text-2xl">☕</p>
             <h2 className="text-3xl">You&apos;re on the list</h2>
             <p className="text-sm leading-relaxed text-[#4a4037]">
-              We&apos;ll email you as soon as we&apos;re approved and open for orders.
+              We&apos;ll email you as soon as we&apos;re approved and open for orders, along with your founding-list 15% off.
             </p>
             <button
               onClick={dismiss}
@@ -114,7 +114,10 @@ export function SubscribePopup() {
                 <span className="whitespace-nowrap">to pour</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                Unfortunately, we can&apos;t take orders until we receive our state permit. Leave your email and we&apos;ll let you know the day sales open.
+                We can&apos;t take orders until we receive our state permit, but our first small batches are almost here. Join our founding list and we&apos;ll let you know the day sales open.
+              </p>
+              <p className="text-sm font-medium text-[#6b3e26]">
+                Founding-list perk: 15% off your first order once we launch, one per customer.
               </p>
             </div>
 
