@@ -92,9 +92,9 @@ export function SubscribePopup() {
         {status === 'success' ? (
           <div className="space-y-3 text-center">
             <p className="text-2xl">☕</p>
-            <h2 className="text-3xl">You&apos;re on the list</h2>
+            <h2 className="text-3xl">You&apos;re on the list!</h2>
             <p className="text-sm leading-relaxed text-[#4a4037]">
-              We&apos;ll email you the day sales open, along with your founding-list code.
+              We&apos;ll email you the day orders open, along with your founding-list code.
             </p>
             <button
               onClick={dismiss}
@@ -110,11 +110,11 @@ export function SubscribePopup() {
                 Coming Soon
               </p>
               <h2>
-                Almost ready{" "}
-                <span className="whitespace-nowrap">to pour</span>
+                The beans{" "}
+                <span className="whitespace-nowrap">are in!</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                The beans are in! We&apos;re just waiting for our state permit to come through. Join the founding list for 15% off your first order once we launch.
+                We&apos;re just waiting on our state permit, and orders open as soon as it comes through. Join our founding list for 15% off your first order once we launch.
               </p>
             </div>
 
