@@ -114,7 +114,7 @@ export function SubscribePopup() {
                 <span className="whitespace-nowrap">to pour</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                We&apos;re finishing up our state permit. Our application has been resubmitted, and we can&apos;t take orders until it&apos;s approved. Leave your email and we&apos;ll let you know the day sales open.
+                We&apos;re working through the resubmission process for our state permit, and we can&apos;t take orders until we have approval from the state. Leave your email and we&apos;ll let you know the day sales open.
               </p>
             </div>
 
