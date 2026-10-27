@@ -114,7 +114,7 @@ export function SubscribePopup() {
                 <span className="whitespace-nowrap">to pour</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                We can&apos;t take orders until we receive our state permit, but our first small batches are almost here. Join the founding list for 15% off your first order once we launch.
+                The beans are in! We&apos;re just waiting for our state permit to come through. Join the founding list for 15% off your first order once we launch.
               </p>
             </div>
 
