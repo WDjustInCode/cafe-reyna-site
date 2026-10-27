@@ -114,7 +114,7 @@ export function SubscribePopup() {
                 <span className="whitespace-nowrap">are in!</span>
               </h2>
               <p className="text-sm leading-relaxed text-[#4a4037]">
-                We&apos;re just waiting on our state permit, and orders open as soon as it comes through. Join our founding list for 15% off your first order once we launch.
+                We&apos;re just waiting for our state permit to come through before we can take orders. Join our founding list for 15% off your first order once we launch.
               </p>
             </div>
 
